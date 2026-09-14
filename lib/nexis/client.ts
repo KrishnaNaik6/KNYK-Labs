@@ -25,7 +25,21 @@ function normalizeCatalogPayload(data: unknown): CatalogResult {
   const payload = (raw.data && typeof raw.data === "object" ? raw.data : raw) as Record<string, unknown>;
 
   if (Array.isArray(payload)) {
-    rawServices = payload;
+    // Array might be services or categories containing services
+    if (payload.length > 0 && typeof payload[0] === "object" && payload[0] !== null && Array.isArray((payload[0] as Record<string, unknown>).services)) {
+      rawCategories = payload;
+      for (const cat of payload) {
+        if (cat && typeof cat === "object" && Array.isArray((cat as Record<string, unknown>).services)) {
+          for (const s of (cat as Record<string, unknown>).services as unknown[]) {
+            if (s && typeof s === "object") {
+              rawServices.push({ ...(s as Record<string, unknown>), category: (s as Record<string, unknown>).category || cat });
+            }
+          }
+        }
+      }
+    } else {
+      rawServices = payload;
+    }
   } else {
     if (Array.isArray(payload.services)) {
       rawServices = payload.services;
@@ -35,6 +49,18 @@ function normalizeCatalogPayload(data: unknown): CatalogResult {
 
     if (Array.isArray(payload.categories)) {
       rawCategories = payload.categories;
+      // If services list wasn't provided at top level, extract from nested category.services
+      if (rawServices.length === 0) {
+        for (const cat of payload.categories) {
+          if (cat && typeof cat === "object" && Array.isArray((cat as Record<string, unknown>).services)) {
+            for (const s of (cat as Record<string, unknown>).services as unknown[]) {
+              if (s && typeof s === "object") {
+                rawServices.push({ ...(s as Record<string, unknown>), category: (s as Record<string, unknown>).category || cat });
+              }
+            }
+          }
+        }
+      }
     }
   }
 
