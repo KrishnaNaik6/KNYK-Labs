@@ -1,5 +1,8 @@
-import { getKnykServiceCatalog, CatalogResult } from "./client";
-import { Service, Category } from "./types";
+import { getKnykServiceCatalog, getKnykContact, CatalogResult } from "./client";
+import { Service, Category, ContactResult, KnykPublicContact } from "./types";
+
+export type { ContactResult, KnykPublicContact };
+export { getKnykContact };
 
 export interface ServiceDetailResult {
   service: Service | null;

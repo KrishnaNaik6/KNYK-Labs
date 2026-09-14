@@ -18,7 +18,7 @@ export const DirectContactCard: React.FC<DirectContactCardProps> = ({
   const formattedAddress = formatAddress(contact?.address);
 
   const hasAnyContactMethod = Boolean(
-    whatsappUrl || phoneUrl || emailUrl || formattedAddress || contact?.businessHours
+    isAvailable && contact && (whatsappUrl || phoneUrl || emailUrl || formattedAddress || contact?.businessHours)
   );
 
   return (

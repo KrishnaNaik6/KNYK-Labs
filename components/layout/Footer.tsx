@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { MessageSquare, Phone, Mail, MapPin, Globe } from "lucide-react";
+import { MessageSquare, Phone, Mail, MapPin } from "lucide-react";
 import { buildWhatsAppLink, buildPhoneLink, buildEmailLink, formatAddress } from "@/lib/utils/contact";
 import type { KnykPublicContact } from "@/lib/nexis/types";
 

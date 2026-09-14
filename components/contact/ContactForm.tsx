@@ -220,7 +220,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ services = [], contact
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+91 98765 43210"
+                placeholder="e.g. +1 555 123 4567 or +91 98765 43210"
                 className={`w-full bg-slate-900/90 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all ${
                   errors.phone ? "border-rose-500/80" : "border-slate-800"
                 }`}

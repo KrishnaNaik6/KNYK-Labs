@@ -33,14 +33,9 @@ cp .env.example .env.local
 Configure your environment variables:
 
 ```env
-# NEXIS API Configuration (Server-side)
+# NEXIS API Configuration (Server-side, single source of truth)
 NEXIS_API_URL=https://nexis-api.example.com
 NEXIS_REVALIDATE_SECONDS=60
-
-# Public Contact Information
-NEXT_PUBLIC_KNYK_WHATSAPP_NUMBER=919876543210
-NEXT_PUBLIC_KNYK_PHONE=+91 98765 43210
-NEXT_PUBLIC_KNYK_EMAIL=contact@knyklabs.com
 
 # Site URL for Canonical & OpenGraph
 NEXT_PUBLIC_SITE_URL=https://knyklabs.com
