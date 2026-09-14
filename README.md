@@ -70,7 +70,7 @@ npm run start
 
 ## Route Map
 
-- `/` — Landing Page (Hero, Dynamic Services, Why KNYK Labs, Capabilities Highlight, 4-Phase Process, Testimonials, CTA)
+- `/` — Landing Page (Hero, Featured Services, Dynamic Category Services, Why KNYK Labs, Capabilities Highlight, 4-Phase Process, Client Commitments, CTA)
 - `/services` — Full Dynamic Catalog with category filtering, search, pricing, and turnaround estimates
 - `/services/[slug]` — Dynamic Service Detail with SEO metadata, milestone payment terms, and WhatsApp/Call actions
 - `/portfolio` — Selected Work Showcase (prepared for NEXIS portfolio module with elegant coming-soon state)

@@ -1,9 +1,11 @@
 import { Metadata } from "next";
-import { getKnykServiceCatalog } from "@/lib/nexis/client";
+import { Suspense } from "react";
+import { getKnykCatalog } from "@/lib/nexis/services";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ServiceGrid } from "@/components/services/ServiceGrid";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { CTASection } from "@/components/sections/CTASection";
+import { ServiceGridSkeleton } from "@/components/ui/LoadingSkeleton";
 
 export const revalidate = 60;
 
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const catalog = await getKnykServiceCatalog();
+  const catalog = await getKnykCatalog();
 
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28 min-h-screen">
@@ -33,17 +35,19 @@ export default async function ServicesPage() {
         {!catalog.isAvailable || catalog.services.length === 0 ? (
           <div className="my-12">
             <ErrorState
-              title="Catalog is temporarily offline"
-              message="We are currently refreshing our service offerings from the NEXIS control center. Please contact us directly for an immediate tailored quote or consultation."
+              title="Unable to load our services right now"
+              message="Our live catalog is currently syncing with the NEXIS control center. Please contact us directly and we'll help you find the right solution for your project."
             />
           </div>
         ) : (
           <div className="mb-20">
-            <ServiceGrid
-              services={catalog.services}
-              categories={catalog.categories}
-              showFilters={true}
-            />
+            <Suspense fallback={<ServiceGridSkeleton count={6} />}>
+              <ServiceGrid
+                services={catalog.services}
+                categories={catalog.categories}
+                showFilters={true}
+              />
+            </Suspense>
           </div>
         )}
 

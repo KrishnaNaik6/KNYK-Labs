@@ -6,6 +6,9 @@ import { getContactConfig, buildWhatsAppLink, buildPhoneLink, buildEmailLink } f
 export const Footer: React.FC = () => {
   const contact = getContactConfig();
   const currentYear = new Date().getFullYear();
+  const whatsappUrl = buildWhatsAppLink();
+  const phoneUrl = buildPhoneLink();
+  const emailUrl = buildEmailLink();
 
   const serviceCategories = [
     { name: "Software & Development", href: "/services" },
@@ -43,29 +46,35 @@ export const Footer: React.FC = () => {
             </p>
 
             <div className="pt-2 flex flex-col space-y-2 text-sm text-slate-300">
-              <a
-                href={buildWhatsAppLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 hover:text-cyan-400 transition-colors"
-              >
-                <MessageSquare className="w-4 h-4 text-emerald-400" />
-                <span>WhatsApp: {contact.whatsappNumber}</span>
-              </a>
-              <a
-                href={buildPhoneLink()}
-                className="inline-flex items-center gap-2 hover:text-cyan-400 transition-colors"
-              >
-                <Phone className="w-4 h-4 text-cyan-400" />
-                <span>Phone: {contact.phone}</span>
-              </a>
-              <a
-                href={buildEmailLink()}
-                className="inline-flex items-center gap-2 hover:text-teal-400 transition-colors"
-              >
-                <Mail className="w-4 h-4 text-teal-400" />
-                <span>Email: {contact.email}</span>
-              </a>
+              {whatsappUrl && (
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-cyan-400 transition-colors"
+                >
+                  <MessageSquare className="w-4 h-4 text-emerald-400" />
+                  <span>WhatsApp: {contact.whatsappNumber}</span>
+                </a>
+              )}
+              {phoneUrl && (
+                <a
+                  href={phoneUrl}
+                  className="inline-flex items-center gap-2 hover:text-cyan-400 transition-colors"
+                >
+                  <Phone className="w-4 h-4 text-cyan-400" />
+                  <span>Phone: {contact.phone}</span>
+                </a>
+              )}
+              {emailUrl && (
+                <a
+                  href={emailUrl}
+                  className="inline-flex items-center gap-2 hover:text-teal-400 transition-colors"
+                >
+                  <Mail className="w-4 h-4 text-teal-400" />
+                  <span>Email: {contact.email}</span>
+                </a>
+              )}
             </div>
           </div>
 

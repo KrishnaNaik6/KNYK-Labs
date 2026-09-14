@@ -1,16 +1,21 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { getKnykServices } from "@/lib/nexis/services";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { DirectContactCard } from "@/components/contact/DirectContactCard";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
-  title: "Contact & Project Enquiries",
+  title: "Contact & Project Enquiries | KNYK Labs",
   description:
     "Get in touch with KNYK Labs. Request a custom quote, scope your next digital project, or connect directly via WhatsApp and phone.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { services } = await getKnykServices();
+
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,7 +40,7 @@ export default function ContactPage() {
                 </div>
               }
             >
-              <ContactForm />
+              <ContactForm services={services} />
             </Suspense>
           </div>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { MessageSquare } from "lucide-react";
-import { buildWhatsAppLink } from "@/lib/utils/contact";
+import { createWhatsAppUrl } from "@/lib/utils/contact";
 import { Button } from "./Button";
 
 export interface WhatsAppButtonProps {
@@ -16,7 +16,12 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   className = "",
   label = "Chat on WhatsApp",
 }) => {
-  const url = buildWhatsAppLink(serviceName);
+  const url = createWhatsAppUrl({ serviceName });
+
+  // If WhatsApp number is missing, gracefully hide the CTA
+  if (!url) {
+    return null;
+  }
 
   return (
     <Button

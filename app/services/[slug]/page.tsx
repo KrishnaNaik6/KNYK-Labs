@@ -1,14 +1,20 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, ShieldCheck, CheckCircle2, Sparkles, MessageSquare, Phone } from "lucide-react";
-import { getKnykServiceBySlug } from "@/lib/nexis/client";
+import {
+  ArrowLeft,
+  Clock,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
+import { getKnykServiceBySlug } from "@/lib/nexis/services";
 import { formatCurrency, formatDelivery, formatAdvance } from "@/lib/utils/currency";
-import { buildWhatsAppLink, buildPhoneLink, getContactConfig } from "@/lib/utils/contact";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
-import { CTASection } from "@/components/sections/CTASection";
+import { CallButton } from "@/components/ui/CallButton";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!result.service) {
     return {
-      title: "Service Not Found",
+      title: "Service Not Found | KNYK Labs",
       description: "The requested KNYK Labs service could not be found.",
     };
   }
@@ -30,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { service } = result;
 
   return {
-    title: service.name,
+    title: `${service.name} | KNYK Labs`,
     description: service.shortDescription,
     openGraph: {
       title: `${service.name} — KNYK Labs`,
@@ -45,6 +51,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+const PROCESS_STEPS = [
+  { step: "01", title: "Discuss requirements", desc: "Initial technical consult & scoping" },
+  { step: "02", title: "Receive quote", desc: "Itemized deliverables & milestones" },
+  { step: "03", title: "Approve project", desc: "Confirm sprint roadmap & timeline" },
+  { step: "04", title: "Pay advance", desc: "Secure kick-off payment" },
+  { step: "05", title: "Project development", desc: "Iterative builds & updates" },
+  { step: "06", title: "Review", desc: "Collaborative feedback & staging tests" },
+  { step: "07", title: "Final payment", desc: "Milestone completion sign-off" },
+  { step: "08", title: "Delivery", desc: "Full IP, source & asset handover" },
+];
+
 export default async function ServiceDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const result = await getKnykServiceBySlug(slug);
@@ -57,7 +74,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
             Service Catalog Temporarily Offline
           </h1>
           <p className="text-slate-400 mb-8 max-w-lg mx-auto">
-            We are currently unable to reach the NEXIS catalog for &ldquo;{slug}&rdquo;. Please contact us directly for immediate details.
+            Unable to reach the NEXIS catalog for &ldquo;{slug}&rdquo;. Please contact us directly for immediate details.
           </p>
           <div className="flex justify-center gap-4">
             <WhatsAppButton serviceName={slug} label="Enquire on WhatsApp" />
@@ -75,18 +92,16 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   }
 
   const { service } = result;
-  const contact = getContactConfig();
   const formattedPrice = formatCurrency(service.startingPrice, service.currency);
   const formattedDelivery = formatDelivery(service.estimatedDelivery);
   const formattedAdvance = formatAdvance(service.advancePercentage);
-  const whatsappUrl = buildWhatsAppLink(service.name);
-  const phoneUrl = buildPhoneLink();
+  const startProjectUrl = `/contact?service=${encodeURIComponent(service.slug)}`;
 
   return (
-    <div className="pt-32 pb-20 md:pt-40 md:pb-28">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb Back Link */}
-        <div className="mb-8">
+    <div className="pt-32 pb-24 md:pt-40 md:pb-32">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        {/* Navigation Breadcrumb */}
+        <div>
           <Link
             href="/services"
             className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-cyan-400 transition-colors"
@@ -96,10 +111,9 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           </Link>
         </div>
 
-        {/* Main Service Hero Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 mb-16 items-start">
-          {/* Left: Service Overview */}
-          <div className="lg:col-span-7 space-y-6">
+        {/* Header Hero Box */}
+        <div className="glass-panel rounded-3xl p-8 md:p-12 border border-cyan-500/25 shadow-2xl shadow-cyan-950/20 space-y-8">
+          <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2.5">
               <Badge variant="cyan">
                 {service.category?.name || "Digital Service"}
@@ -107,7 +121,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
               {service.isFeatured && (
                 <Badge variant="featured" className="gap-1">
                   <Sparkles className="w-3 h-3 text-cyan-300" />
-                  <span>Featured Solution</span>
+                  <span>Featured Service</span>
                 </Badge>
               )}
             </div>
@@ -116,131 +130,188 @@ export default async function ServiceDetailPage({ params }: PageProps) {
               {service.name}
             </h1>
 
-            <p className="text-lg text-slate-300 leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl">
               {service.shortDescription}
             </p>
+          </div>
 
-            {/* Scope / Description details */}
-            <div className="pt-6 border-t border-slate-800/80 space-y-4">
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                Service Scope & Execution
-              </h2>
-
-              {service.description ? (
-                <div className="prose prose-invert prose-cyan max-w-none text-slate-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
-                  {service.description}
-                </div>
-              ) : (
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Every engagement is tailored to your specific technical and business requirements. Contact us to review deliverables, tech stacks, and implementation milestones.
-                </p>
-              )}
+          {/* Pricing & Delivery Metas */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-slate-800">
+            <div>
+              <span className="block text-xs uppercase font-semibold tracking-wider text-slate-400">
+                Investment
+              </span>
+              <span className="text-2xl font-black text-white mt-0.5 block">
+                {formattedPrice}
+              </span>
             </div>
 
-            {/* Engagement Standards */}
-            <div className="pt-6 border-t border-slate-800/80">
-              <h3 className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-4">
-                Included with this engagement
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-300">
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>Direct builder communication</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
-                  <span>Staged milestone reviews</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>Full IP and source handover</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
-                  <span>Post-delivery support buffer</span>
-                </div>
-              </div>
+            <div>
+              <span className="block text-xs uppercase font-semibold tracking-wider text-slate-400">
+                Estimated Delivery
+              </span>
+              <span className="text-lg font-bold text-slate-200 mt-1 inline-flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-teal-400" />
+                {formattedDelivery}
+              </span>
+            </div>
+
+            <div>
+              <span className="block text-xs uppercase font-semibold tracking-wider text-slate-400">
+                Advance Terms
+              </span>
+              <span className="text-lg font-bold text-slate-200 mt-1 inline-flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                {formattedAdvance}
+              </span>
             </div>
           </div>
 
-          {/* Right: Investment & Action Card */}
-          <div className="lg:col-span-5">
-            <div className="glass-panel rounded-3xl p-7 md:p-8 border border-cyan-500/30 shadow-2xl shadow-cyan-950/40 sticky top-28 space-y-6">
+          {/* Hero CTAs */}
+          <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-800/80">
+            <Button variant="primary" size="lg" href={startProjectUrl}>
+              <span>Start This Project</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+
+            <WhatsAppButton
+              serviceName={service.name}
+              size="lg"
+              label="Discuss on WhatsApp"
+            />
+
+            <CallButton size="lg" />
+          </div>
+        </div>
+
+        {/* Section 1: About This Service */}
+        <div className="space-y-6">
+          <div className="pb-3 border-b border-slate-800">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              About this service
+            </h2>
+          </div>
+
+          <div className="prose prose-invert prose-cyan max-w-none text-slate-300 leading-relaxed whitespace-pre-line text-base">
+            {service.description ||
+              "Every engagement at KNYK Labs is custom-architected for your business domain. We collaborate directly with your team to deliver high-performance software, creative design systems, and robust automation."}
+          </div>
+        </div>
+
+        {/* Section 2: What's Included */}
+        <div className="space-y-6">
+          <div className="pb-3 border-b border-slate-800">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              What&apos;s included
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="glass-panel rounded-2xl p-5 border border-slate-800 flex items-start gap-3.5">
+              <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Project Investment
-                </span>
-                <div className="text-3xl font-black text-white mt-1">
-                  {formattedPrice}
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Final scope confirmed upon initial consultation.
+                <h3 className="text-sm font-bold text-white mb-1">
+                  100% Intellectual Property Handover
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Full repository rights, source code, production assets, and vector deliverables belong exclusively to you.
                 </p>
               </div>
+            </div>
 
-              <div className="space-y-3 pt-4 border-t border-slate-800">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400 flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-teal-400" />
-                    Turnaround:
-                  </span>
-                  <span className="font-semibold text-white">
-                    {formattedDelivery}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400 flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                    Payment Terms:
-                  </span>
-                  <span className="font-semibold text-white">
-                    {formattedAdvance}
-                  </span>
-                </div>
+            <div className="glass-panel rounded-2xl p-5 border border-slate-800 flex items-start gap-3.5">
+              <CheckCircle2 className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-bold text-white mb-1">
+                  Staged Sprint Milestone Updates
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Regular demonstration deployments and direct review access throughout the implementation timeline.
+                </p>
               </div>
+            </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3 pt-4 border-t border-slate-800">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  href={`/contact?service=${encodeURIComponent(service.name)}`}
-                  className="w-full justify-center"
-                >
-                  Start This Project
-                </Button>
-
-                <Button
-                  variant="whatsapp"
-                  size="lg"
-                  href={whatsappUrl}
-                  isExternal
-                  className="w-full justify-center"
-                >
-                  <MessageSquare className="w-4 h-4 fill-current" />
-                  <span>Discuss on WhatsApp</span>
-                </Button>
-
-                <Button
-                  variant="secondary"
-                  size="md"
-                  href={phoneUrl}
-                  className="w-full justify-center"
-                >
-                  <Phone className="w-4 h-4 text-cyan-400" />
-                  <span>Call {contact.phone}</span>
-                </Button>
+            <div className="glass-panel rounded-2xl p-5 border border-slate-800 flex items-start gap-3.5">
+              <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-bold text-white mb-1">
+                  Production Testing & Verification
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Cross-browser compatibility, responsive viewports, performance audits, and error boundary protections.
+                </p>
               </div>
+            </div>
 
-              <p className="text-[11px] text-center text-slate-400">
-                No upfront commitment required until scope and milestones are confirmed.
-              </p>
+            <div className="glass-panel rounded-2xl p-5 border border-slate-800 flex items-start gap-3.5">
+              <CheckCircle2 className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-bold text-white mb-1">
+                  Post-Handover Support Buffer
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Dedicated bug-fix buffer and configuration assistance after project handover.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <CTASection />
+        {/* Section 3: Project Process */}
+        <div className="space-y-6">
+          <div className="pb-3 border-b border-slate-800">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              Project process
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Our transparent, 8-phase execution roadmap from initial scope to live deployment.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PROCESS_STEPS.map((item) => (
+              <div
+                key={item.step}
+                className="glass-panel rounded-2xl p-5 border border-slate-800/80 flex flex-col justify-between"
+              >
+                <div>
+                  <span className="font-mono text-cyan-400 text-xs font-bold block mb-2">
+                    {item.step}.
+                  </span>
+                  <h3 className="text-sm font-bold text-white mb-1">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 4: Bottom Conversion CTA */}
+        <div className="glass-panel rounded-3xl p-8 md:p-12 border border-cyan-500/30 text-center space-y-6 shadow-2xl shadow-cyan-950/20">
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Ready to start?
+          </h2>
+          <p className="text-slate-300 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
+            Begin with a clear consultation and tailored proposal for {service.name}. No commitments until milestones and scope are confirmed.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
+            <Button variant="primary" size="lg" href={startProjectUrl}>
+              <span>Start a Project</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+
+            <WhatsAppButton
+              serviceName={service.name}
+              size="lg"
+              label="WhatsApp Us"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

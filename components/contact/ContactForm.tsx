@@ -4,34 +4,53 @@ import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Send, MessageSquare, AlertCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { getContactConfig } from "@/lib/utils/contact";
+import { Service } from "@/lib/nexis/types";
+import { createWhatsAppUrl, buildEmailLink } from "@/lib/utils/contact";
 
-const AVAILABLE_CATEGORIES = [
+const BUDGET_OPTIONS = [
+  "Under ₹5,000",
+  "₹5,000 – ₹10,000",
+  "₹10,000 – ₹25,000",
+  "₹25,000+",
+  "Not sure yet",
+];
+
+const FALLBACK_CATEGORIES = [
   "Software & Development",
   "Graphic Design",
   "Photo & Video",
   "Presentations & Documents",
   "AI & Automation",
   "Digital Services",
-  "Custom / Other",
+  "Custom Project",
 ];
 
-export const ContactForm: React.FC = () => {
-  const searchParams = useSearchParams();
-  const initialService = searchParams.get("service") || "";
+interface ContactFormProps {
+  services?: Service[];
+}
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    service: initialService,
-    message: "",
+export const ContactForm: React.FC<ContactFormProps> = ({ services = [] }) => {
+  const searchParams = useSearchParams();
+  const serviceParam = searchParams.get("service") || "";
+
+  const [formData, setFormData] = useState(() => {
+    const matchedService = services.find(
+      (s) => s.slug.toLowerCase() === serviceParam.toLowerCase() || s.name.toLowerCase() === serviceParam.toLowerCase()
+    );
+    return {
+      name: "",
+      email: "",
+      phone: "",
+      service: matchedService ? matchedService.name : serviceParam,
+      budget: "₹5,000 – ₹10,000",
+      message: "",
+    };
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+  const [preparedWhatsAppUrl, setPreparedWhatsAppUrl] = useState<string | null>(null);
 
-  const contact = getContactConfig();
+  const emailUrl = buildEmailLink(formData.service ? `Project Enquiry: ${formData.service}` : "Project Enquiry");
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -51,7 +70,7 @@ export const ContactForm: React.FC = () => {
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "Please tell us a little about your project";
+      newErrors.message = "Please provide brief details about your project";
     }
 
     setErrors(newErrors);
@@ -65,59 +84,68 @@ export const ContactForm: React.FC = () => {
       return;
     }
 
-    // Notice: NEXIS public leads endpoint is pending integration.
-    // Per explicit project rules: Do NOT pretend an enquiry was submitted to a backend when it was not.
-    // Offer seamless transition to WhatsApp with pre-filled message or email.
-    const customWhatsAppUrl = `https://wa.me/${contact.whatsappNumber.replace(
-      /[^0-9]/g,
-      ""
-    )}?text=${encodeURIComponent(
-      `Hi KNYK Labs,\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nService: ${formData.service || "General"}\nMessage: ${formData.message}`
-    )}`;
+    // Build custom prefilled WhatsApp link with all form attributes
+    const url = createWhatsAppUrl({
+      serviceName: formData.service || "General Inquiry",
+      budget: formData.budget,
+      clientName: `${formData.name} (${formData.phone}, ${formData.email})`,
+    });
 
-    setSubmittedMessage(customWhatsAppUrl);
+    setPreparedWhatsAppUrl(url);
   };
 
   return (
     <div className="glass-panel rounded-3xl p-8 md:p-10 border border-slate-800 relative">
-      {submittedMessage ? (
-        <div className="space-y-6 text-center py-6">
+      {preparedWhatsAppUrl ? (
+        <div className="space-y-6 text-center py-4">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
             <Sparkles className="w-7 h-7" />
           </div>
 
           <div className="space-y-2">
             <h3 className="text-2xl font-bold text-white tracking-tight">
-              Ready to Send Directly to Our Team
+              Ready to Connect Directly
             </h3>
             <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-              Our automated web-enquiry gateway is connecting to the NEXIS control center. For instant response, click below to transfer your details directly to our verified WhatsApp or reach out via phone.
+              Direct form endpoint integration with NEXIS is in progress. For immediate consultation with no delay, your enquiry has been formatted for one-click dispatch to our verified channels:
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-left text-xs font-mono text-slate-300 space-y-1.5 max-w-md mx-auto">
-            <div><strong>Client:</strong> {formData.name}</div>
-            <div><strong>Email:</strong> {formData.email}</div>
-            <div><strong>Phone:</strong> {formData.phone}</div>
-            <div><strong>Service:</strong> {formData.service || "General"}</div>
-            <div><strong>Scope:</strong> {formData.message}</div>
+          {/* Form Recap */}
+          <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-left text-xs font-mono text-slate-300 space-y-2 max-w-md mx-auto">
+            <div><span className="text-slate-500">Name:</span> <strong className="text-white">{formData.name}</strong></div>
+            <div><span className="text-slate-500">Contact:</span> {formData.phone} • {formData.email}</div>
+            <div><span className="text-slate-500">Selected Service:</span> <span className="text-cyan-400">{formData.service || "General Scoping"}</span></div>
+            <div><span className="text-slate-500">Budget Range:</span> <span className="text-teal-400">{formData.budget}</span></div>
+            <div><span className="text-slate-500">Project Brief:</span> {formData.message}</div>
           </div>
 
+          {/* Action Row */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
             <Button
               variant="whatsapp"
               size="lg"
-              href={submittedMessage}
+              href={preparedWhatsAppUrl}
               isExternal
             >
               <MessageSquare className="w-4 h-4 fill-current" />
               <span>Send via WhatsApp Now</span>
             </Button>
 
+            {emailUrl && (
+              <Button
+                variant="secondary"
+                size="lg"
+                href={emailUrl}
+              >
+                <span>Send via Email</span>
+              </Button>
+            )}
+
             <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => setSubmittedMessage(null)}
+              variant="ghost"
+              size="md"
+              onClick={() => setPreparedWhatsAppUrl(null)}
             >
               Edit Details
             </Button>
@@ -125,15 +153,15 @@ export const ContactForm: React.FC = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-6">
-          {/* Notice banner */}
+          {/* Transparent Notice */}
           <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-500/20 text-xs text-slate-300 flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
             <span>
-              Direct consultations open. You can fill out this scope form or message us immediately on WhatsApp for priority response.
+              Direct consultation scoping form. Submit your project requirements below or connect directly via WhatsApp for rapid technical review.
             </span>
           </div>
 
-          {/* Name & Email Row */}
+          {/* Name & Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label htmlFor="name" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
@@ -144,7 +172,7 @@ export const ContactForm: React.FC = () => {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="John Doe"
+                placeholder="Alex Morgan"
                 className={`w-full bg-slate-900/90 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all ${
                   errors.name ? "border-rose-500/80" : "border-slate-800"
                 }`}
@@ -163,7 +191,7 @@ export const ContactForm: React.FC = () => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="john@example.com"
+                placeholder="alex@example.com"
                 className={`w-full bg-slate-900/90 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all ${
                   errors.email ? "border-rose-500/80" : "border-slate-800"
                 }`}
@@ -174,7 +202,7 @@ export const ContactForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Phone & Service Row */}
+          {/* Phone & Service Selector */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label htmlFor="phone" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
@@ -197,36 +225,70 @@ export const ContactForm: React.FC = () => {
 
             <div>
               <label htmlFor="service" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Interested Service
+                Target Service
               </label>
-              <input
-                id="service"
-                type="text"
-                list="service-suggestions"
-                value={formData.service}
-                onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                placeholder="e.g. Next.js Web App, AI Automation, Branding"
-                className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all"
-              />
-              <datalist id="service-suggestions">
-                {AVAILABLE_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat} />
-                ))}
-              </datalist>
+              {services.length > 0 ? (
+                <select
+                  id="service"
+                  value={formData.service}
+                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                  className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all cursor-pointer"
+                >
+                  <option value="">General Project / Consultation</option>
+                  {services.map((s) => (
+                    <option key={s.id || s.slug} value={s.name}>
+                      {s.name} ({s.category?.name || "Service"})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <select
+                  id="service"
+                  value={formData.service}
+                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                  className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all cursor-pointer"
+                >
+                  <option value="">Select a capability domain</option>
+                  {FALLBACK_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
 
-          {/* Message textarea */}
+          {/* Budget Options */}
+          <div>
+            <label htmlFor="budget" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              Estimated Budget Tier
+            </label>
+            <select
+              id="budget"
+              value={formData.budget}
+              onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+              className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all cursor-pointer"
+            >
+              {BUDGET_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Project Details */}
           <div>
             <label htmlFor="message" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Project Brief / Details <span className="text-cyan-400">*</span>
+              Project Scope & Requirements <span className="text-cyan-400">*</span>
             </label>
             <textarea
               id="message"
               rows={4}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              placeholder="Tell us about your project requirements, target timeline, and any specific tools or references..."
+              placeholder="Tell us about your objectives, timeline, required features, or existing systems..."
               className={`w-full bg-slate-900/90 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all resize-y ${
                 errors.message ? "border-rose-500/80" : "border-slate-800"
               }`}
@@ -236,7 +298,7 @@ export const ContactForm: React.FC = () => {
             )}
           </div>
 
-          {/* Submit CTA */}
+          {/* Action button */}
           <Button
             type="submit"
             variant="primary"

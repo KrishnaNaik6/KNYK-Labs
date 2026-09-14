@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getKnykServiceCatalog } from "@/lib/nexis/client";
+import { getKnykCatalog } from "@/lib/nexis/services";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const catalog = await getKnykServiceCatalog();
+    const catalog = await getKnykCatalog();
     if (catalog.isAvailable && catalog.services.length > 0) {
       const serviceRoutes: MetadataRoute.Sitemap = catalog.services.map((service) => ({
         url: `${siteUrl}/services/${service.slug}`,

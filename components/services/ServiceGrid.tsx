@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Service, Category } from "@/lib/nexis/types";
 import { ServiceCard } from "./ServiceCard";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -19,8 +20,26 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
   initialCategory = "all",
   showFilters = true,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const urlCategory = searchParams.get("category");
+  const [localCategory, setLocalCategory] = useState<string>(initialCategory);
+  const selectedCategory = urlCategory || localCategory;
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleCategoryChange = (catId: string) => {
+    setLocalCategory(catId);
+    const params = new URLSearchParams(searchParams.toString());
+    if (catId === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", catId);
+    }
+    const queryStr = params.toString();
+    router.replace(queryStr ? `${pathname}?${queryStr}` : pathname, { scroll: false });
+  };
 
   // Extract unique category tabs
   const categoryTabs = useMemo(() => {
@@ -50,7 +69,10 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
       // Category match
       const categoryId = service.category?.id || service.category?.slug || service.categoryId;
       const matchesCategory =
-        selectedCategory === "all" || categoryId === selectedCategory;
+        selectedCategory === "all" ||
+        categoryId === selectedCategory ||
+        service.category?.slug === selectedCategory ||
+        service.categoryId === selectedCategory;
 
       // Search match
       const query = searchQuery.trim().toLowerCase();
@@ -78,9 +100,19 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search services, technologies, or deliverables..."
-                className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all"
+                className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all"
                 aria-label="Search services"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
             {/* Results count */}
@@ -95,13 +127,15 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
 
           {/* Category Tabs */}
           {categoryTabs.length > 1 && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" role="tablist">
               {categoryTabs.map((tab) => {
                 const isSelected = selectedCategory === tab.id;
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setSelectedCategory(tab.id)}
+                    role="tab"
+                    aria-selected={isSelected}
+                    onClick={() => handleCategoryChange(tab.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                       isSelected
                         ? "bg-cyan-500 text-slate-950 font-semibold shadow-md shadow-cyan-500/25"

@@ -1,12 +1,10 @@
-import { ArrowRight, Phone } from "lucide-react";
+import React from "react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
-import { buildPhoneLink, getContactConfig } from "@/lib/utils/contact";
+import { CallButton } from "@/components/ui/CallButton";
 
 export const CTASection: React.FC = () => {
-  const contact = getContactConfig();
-  const phoneUrl = buildPhoneLink();
-
   return (
     <section className="py-20 md:py-28 relative overflow-hidden">
       {/* Background glowing gradient */}
@@ -39,16 +37,7 @@ export const CTASection: React.FC = () => {
 
             <WhatsAppButton size="lg" className="w-full sm:w-auto" label="Chat on WhatsApp" />
 
-            <Button
-              variant="secondary"
-              size="lg"
-              href={phoneUrl}
-              className="w-full sm:w-auto"
-              aria-label={`Call ${contact.phone}`}
-            >
-              <Phone className="w-4 h-4 text-cyan-400" />
-              <span>{contact.phone}</span>
-            </Button>
+            <CallButton size="lg" className="w-full sm:w-auto" />
           </div>
         </div>
       </div>

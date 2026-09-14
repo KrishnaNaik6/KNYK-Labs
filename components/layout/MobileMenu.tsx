@@ -123,34 +123,42 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             Start a Project
           </Button>
 
-          <Button
-            variant="whatsapp"
-            size="md"
-            href={whatsappUrl}
-            isExternal
-            className="w-full justify-center"
-          >
-            <MessageSquare className="w-4 h-4 fill-current" />
-            <span>Chat on WhatsApp</span>
-          </Button>
+          {whatsappUrl && (
+            <Button
+              variant="whatsapp"
+              size="md"
+              href={whatsappUrl}
+              isExternal
+              className="w-full justify-center"
+            >
+              <MessageSquare className="w-4 h-4 fill-current" />
+              <span>Chat on WhatsApp</span>
+            </Button>
+          )}
 
-          <div className="flex items-center justify-around pt-2 text-xs text-slate-400">
-            <a
-              href={`tel:${contact.phone.replace(/[^0-9+]/g, "")}`}
-              className="flex items-center gap-1.5 hover:text-cyan-400"
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <span>Call</span>
-            </a>
-            <span className="text-slate-700">•</span>
-            <a
-              href={`mailto:${contact.email}`}
-              className="flex items-center gap-1.5 hover:text-teal-400"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Email</span>
-            </a>
-          </div>
+          {(contact.phone || contact.email) && (
+            <div className="flex items-center justify-around pt-2 text-xs text-slate-400">
+              {contact.phone && (
+                <a
+                  href={`tel:${contact.phone.replace(/[^0-9+]/g, "")}`}
+                  className="flex items-center gap-1.5 hover:text-cyan-400"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Call</span>
+                </a>
+              )}
+              {contact.phone && contact.email && <span className="text-slate-700">•</span>}
+              {contact.email && (
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="flex items-center gap-1.5 hover:text-teal-400"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Email</span>
+                </a>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

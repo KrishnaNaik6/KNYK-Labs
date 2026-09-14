@@ -10,14 +10,14 @@ export interface ErrorStateProps {
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
-  title = "Services are temporarily unavailable",
-  message = "We are currently syncing with our catalog service. Please contact us directly and our team will immediately help you explore the right solution for your project.",
+  title = "Unable to load our services right now.",
+  message = "Contact us directly and we'll help you find the right solution.",
   showContact = true,
   className = "",
 }) => {
   return (
     <div
-      className={`glass-panel rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto border border-cyan-500/20 shadow-xl shadow-cyan-950/20 ${className}`}
+      className={`glass-panel rounded-3xl p-8 md:p-12 text-center max-w-2xl mx-auto border border-cyan-500/20 shadow-xl shadow-cyan-950/20 ${className}`}
     >
       <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
         <AlertCircle className="w-7 h-7" />
@@ -33,9 +33,6 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 
       {showContact && (
         <div className="flex flex-col items-center justify-center">
-          <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-4">
-            Connect with our team directly
-          </p>
           <ContactButtons />
         </div>
       )}

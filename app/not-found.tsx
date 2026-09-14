@@ -1,6 +1,5 @@
 import { Compass, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 export default function NotFound() {
   return (
@@ -12,28 +11,26 @@ export default function NotFound() {
           </div>
 
           <span className="inline-block text-xs uppercase font-mono tracking-widest text-cyan-400 font-semibold">
-            Error 404 // Page Not Found
+            Error 404
           </span>
 
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Lost in the digital space
+            Service not found
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            The page or service you are looking for does not exist, has moved, or is temporarily unavailable.
+            The service you&apos;re looking for may have been moved or is no longer available.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button variant="primary" size="md" href="/">
-              <span>Return Home</span>
+            <Button variant="primary" size="md" href="/services">
+              <span>Back to Services</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
 
-            <Button variant="secondary" size="md" href="/services">
-              Browse Services
+            <Button variant="secondary" size="md" href="/contact">
+              Start a Project
             </Button>
-
-            <WhatsAppButton size="md" label="Help on WhatsApp" />
           </div>
         </div>
       </div>
