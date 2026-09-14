@@ -84,3 +84,23 @@ export interface ContactResult {
   isAvailable: boolean;
   error?: string;
 }
+
+export interface KnykPublicBrandAsset {
+  url: string;
+  alt: string;
+  width?: number | null;
+  height?: number | null;
+}
+
+export interface KnykPublicBranding {
+  primaryLogo: KnykPublicBrandAsset | null;
+  brandMark: KnykPublicBrandAsset | null;
+  favicon?: KnykPublicBrandAsset | null;
+  socialPreview?: KnykPublicBrandAsset | null;
+}
+
+export interface BrandingResult {
+  branding: KnykPublicBranding | null;
+  isAvailable: boolean;
+  error?: string;
+}

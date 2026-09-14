@@ -12,3 +12,4 @@ export {
   groupServicesByCategory,
 } from "./services";
 export { getKnykContact } from "./contact";
+export { getKnykBranding } from "./branding";

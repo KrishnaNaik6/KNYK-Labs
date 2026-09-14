@@ -4,7 +4,9 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ContactProvider } from "@/lib/context/ContactContext";
+import { BrandingProvider } from "@/lib/context/BrandingContext";
 import { getKnykContact } from "@/lib/nexis/contact";
+import { getKnykBranding } from "@/lib/nexis/branding";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,7 +26,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "KNYK Labs — Digital Solutions That Move You Forward",
+    default: "KNYK Labs – Digital Solutions That Move You Forward",
     template: "%s | KNYK Labs",
   },
   description:
@@ -46,14 +48,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    title: "KNYK Labs — Digital Solutions That Move You Forward",
+    title: "KNYK Labs – Digital Solutions That Move You Forward",
     description:
       "High-impact software development, graphic design, photo & video, AI automation, and digital services studio.",
     siteName: "KNYK Labs",
   },
   twitter: {
     card: "summary_large_image",
-    title: "KNYK Labs — Digital Solutions That Move You Forward",
+    title: "KNYK Labs – Digital Solutions That Move You Forward",
     description:
       "High-impact software development, graphic design, photo & video, AI automation, and digital services studio.",
   },
@@ -75,15 +77,18 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { contact, isAvailable } = await getKnykContact();
+  const [{ contact, isAvailable: isContactAvailable }, { branding, isAvailable: isBrandingAvailable }] =
+    await Promise.all([getKnykContact(), getKnykBranding()]);
 
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
       <body className="bg-[#060911] text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
-        <ContactProvider contact={contact} isAvailable={isAvailable}>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer contact={contact} />
+        <ContactProvider contact={contact} isAvailable={isContactAvailable}>
+          <BrandingProvider branding={branding} isAvailable={isBrandingAvailable}>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer contact={contact} />
+          </BrandingProvider>
         </ContactProvider>
       </body>
     </html>

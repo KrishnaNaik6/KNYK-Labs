@@ -1,10 +1,17 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import { useBranding } from "@/lib/context/BrandingContext";
 import Link from "next/link";
 import { MessageSquare, Phone, Mail, MapPin } from "lucide-react";
 import { buildWhatsAppLink, buildPhoneLink, buildEmailLink, formatAddress } from "@/lib/utils/contact";
 import type { KnykPublicContact } from "@/lib/nexis/types";
 
 export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ contact }) => {
+  const { branding } = useBranding();
+  const [imgError, setImgError] = useState(false);
+  const footerLogo = branding?.primaryLogo || branding?.brandMark;
   const currentYear = new Date().getFullYear();
   const whatsappUrl = buildWhatsAppLink(contact?.whatsappNumber);
   const phoneUrl = buildPhoneLink(contact?.phone);
@@ -34,18 +41,31 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-sm shadow-md shadow-cyan-500/20">
-                K
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white">
-                {contact?.businessName ? (
-                  contact.businessName
-                ) : (
-                  <>KNYK <span className="text-cyan-400">Labs</span></>
-                )}
-              </span>
-            </Link>
+            {footerLogo && !imgError ? (
+              <Link href="/" className="inline-flex items-center gap-2.5">
+                <Image
+                  src={footerLogo.url}
+                  alt={footerLogo.alt || "KNYK Labs"}
+                  width={footerLogo.width || 160}
+                  height={footerLogo.height || 40}
+                  className="h-9 w-auto max-w-[180px] object-contain drop-shadow-sm"
+                  onError={() => setImgError(true)}
+                />
+              </Link>
+            ) : (
+              <Link href="/" className="inline-flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-sm shadow-md shadow-cyan-500/20">
+                  K
+                </div>
+                <span className="text-xl font-bold tracking-tight text-white">
+                  {contact?.businessName ? (
+                    contact.businessName
+                  ) : (
+                    <>KNYK <span className="text-cyan-400">Labs</span></>
+                  )}
+                </span>
+              </Link>
+            )}
 
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
               Digital solutions studio helping businesses, creators, and teams build standout software, branding, multimedia, and automation systems.

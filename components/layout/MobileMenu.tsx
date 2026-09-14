@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { X, ArrowRight, MessageSquare, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { buildWhatsAppLink, buildPhoneLink, buildEmailLink } from "@/lib/utils/contact";
 import { useContact } from "@/lib/context/ContactContext";
+import { useBranding } from "@/lib/context/BrandingContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -21,6 +23,12 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
 }) => {
   const pathname = usePathname();
   const { contact } = useContact();
+  const { branding } = useBranding();
+  const [imgError, setImgError] = useState(false);
+
+  // Fallback hierarchy for mobile: Brand Mark -> Primary Logo -> Text fallback
+  const mobileLogo = branding?.brandMark || branding?.primaryLogo;
+
   const whatsappUrl = buildWhatsAppLink(contact?.whatsappNumber);
   const phoneUrl = buildPhoneLink(contact?.phone);
   const targetEmail = contact?.email || contact?.salesEmail || contact?.supportEmail;
@@ -75,16 +83,40 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
               onClick={onClose}
               className="text-lg font-bold tracking-tight text-white flex items-center gap-2"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-sm">
-                K
-              </div>
-              <span>
-                {contact?.businessName ? (
-                  contact.businessName
-                ) : (
-                  <>KNYK <span className="text-cyan-400">Labs</span></>
-                )}
-              </span>
+              {mobileLogo && !imgError ? (
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={mobileLogo.url}
+                    alt={mobileLogo.alt || "KNYK Labs"}
+                    width={mobileLogo.width || 36}
+                    height={mobileLogo.height || 36}
+                    className="h-8 w-auto max-w-[120px] object-contain rounded-lg"
+                    onError={() => setImgError(true)}
+                  />
+                  {branding?.brandMark && (
+                    <span>
+                      {contact?.businessName ? (
+                        contact.businessName
+                      ) : (
+                        <>KNYK <span className="text-cyan-400">Labs</span></>
+                      )}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-sm">
+                    K
+                  </div>
+                  <span>
+                    {contact?.businessName ? (
+                      contact.businessName
+                    ) : (
+                      <>KNYK <span className="text-cyan-400">Labs</span></>
+                    )}
+                  </span>
+                </>
+              )}
             </Link>
 
             <button

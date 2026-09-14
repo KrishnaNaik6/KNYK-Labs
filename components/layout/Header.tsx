@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { MobileMenu } from "./MobileMenu";
+import { useBranding } from "@/lib/context/BrandingContext";
 
 const NAV_LINKS = [
   { name: "Services", href: "/services" },
@@ -17,7 +19,13 @@ const NAV_LINKS = [
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const pathname = usePathname();
+  const { branding } = useBranding();
+
+  const primaryLogo = branding?.primaryLogo;
+  const brandMark = branding?.brandMark;
+  const activeLogo = primaryLogo || brandMark;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,23 +46,50 @@ export const Header: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Brand Logo */}
+            {/* Brand Logo with fallback hierarchy: Primary Logo -> Brand Mark -> Text fallback */}
             <Link
               href="/"
               className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg"
               aria-label="KNYK Labs Homepage"
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-400 to-cyan-300 flex items-center justify-center text-slate-950 font-black text-base shadow-md shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all">
-                K
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-white leading-none">
-                  KNYK <span className="text-cyan-400">Labs</span>
-                </span>
-                <span className="text-[10px] tracking-widest uppercase text-slate-400 font-semibold mt-0.5">
-                  Digital Studio
-                </span>
-              </div>
+              {activeLogo && !imgError ? (
+                <div className="flex items-center gap-2.5">
+                  <Image
+                    src={activeLogo.url}
+                    alt={activeLogo.alt || "KNYK Labs"}
+                    width={activeLogo.width || 160}
+                    height={activeLogo.height || 40}
+                    className="h-9 w-auto max-w-[180px] object-contain drop-shadow-sm transition-transform group-hover:scale-[1.02]"
+                    priority
+                    onError={() => setImgError(true)}
+                  />
+                  {/* If using circular brandMark only, show text alongside */}
+                  {!primaryLogo && brandMark && (
+                    <div className="flex flex-col">
+                      <span className="text-xl font-bold tracking-tight text-white leading-none">
+                        KNYK <span className="text-cyan-400">Labs</span>
+                      </span>
+                      <span className="text-[10px] tracking-widest uppercase text-slate-400 font-semibold mt-0.5">
+                        Digital Studio
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-400 to-cyan-300 flex items-center justify-center text-slate-950 font-black text-base shadow-md shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all">
+                    K
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xl font-bold tracking-tight text-white leading-none">
+                      KNYK <span className="text-cyan-400">Labs</span>
+                    </span>
+                    <span className="text-[10px] tracking-widest uppercase text-slate-400 font-semibold mt-0.5">
+                      Digital Studio
+                    </span>
+                  </div>
+                </>
+              )}
             </Link>
 
             {/* Desktop Navigation Links */}
