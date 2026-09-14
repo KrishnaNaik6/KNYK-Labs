@@ -1,14 +1,16 @@
 import React from "react";
 import Link from "next/link";
-import { MessageSquare, Phone, Mail } from "lucide-react";
-import { getContactConfig, buildWhatsAppLink, buildPhoneLink, buildEmailLink } from "@/lib/utils/contact";
+import { MessageSquare, Phone, Mail, MapPin, Globe } from "lucide-react";
+import { buildWhatsAppLink, buildPhoneLink, buildEmailLink, formatAddress } from "@/lib/utils/contact";
+import type { KnykPublicContact } from "@/lib/nexis/types";
 
-export const Footer: React.FC = () => {
-  const contact = getContactConfig();
+export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ contact }) => {
   const currentYear = new Date().getFullYear();
-  const whatsappUrl = buildWhatsAppLink();
-  const phoneUrl = buildPhoneLink();
-  const emailUrl = buildEmailLink();
+  const whatsappUrl = buildWhatsAppLink(contact?.whatsappNumber);
+  const phoneUrl = buildPhoneLink(contact?.phone);
+  const targetEmail = contact?.email || contact?.salesEmail || contact?.supportEmail;
+  const emailUrl = buildEmailLink(targetEmail);
+  const formattedAddress = formatAddress(contact?.address);
 
   const serviceCategories = [
     { name: "Software & Development", href: "/services" },
@@ -37,7 +39,11 @@ export const Footer: React.FC = () => {
                 K
               </div>
               <span className="text-xl font-bold tracking-tight text-white">
-                KNYK <span className="text-cyan-400">Labs</span>
+                {contact?.businessName ? (
+                  contact.businessName
+                ) : (
+                  <>KNYK <span className="text-cyan-400">Labs</span></>
+                )}
               </span>
             </Link>
 
@@ -46,7 +52,7 @@ export const Footer: React.FC = () => {
             </p>
 
             <div className="pt-2 flex flex-col space-y-2 text-sm text-slate-300">
-              {whatsappUrl && (
+              {whatsappUrl && contact?.whatsappNumber && (
                 <a
                   href={whatsappUrl}
                   target="_blank"
@@ -57,7 +63,7 @@ export const Footer: React.FC = () => {
                   <span>WhatsApp: {contact.whatsappNumber}</span>
                 </a>
               )}
-              {phoneUrl && (
+              {phoneUrl && contact?.phone && (
                 <a
                   href={phoneUrl}
                   className="inline-flex items-center gap-2 hover:text-cyan-400 transition-colors"
@@ -66,29 +72,71 @@ export const Footer: React.FC = () => {
                   <span>Phone: {contact.phone}</span>
                 </a>
               )}
-              {emailUrl && (
+              {emailUrl && targetEmail && (
                 <a
                   href={emailUrl}
-                  className="inline-flex items-center gap-2 hover:text-teal-400 transition-colors"
+                  className="inline-flex items-center gap-2 hover:text-cyan-400 transition-colors"
                 >
                   <Mail className="w-4 h-4 text-teal-400" />
-                  <span>Email: {contact.email}</span>
+                  <span>Email: {targetEmail}</span>
                 </a>
               )}
+              {formattedAddress && (
+                <div className="inline-flex items-start gap-2 text-slate-400 text-xs pt-1">
+                  <MapPin className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                  <span>{formattedAddress}</span>
+                </div>
+              )}
+              {contact?.businessHours && (
+                <div className="text-xs text-slate-500">
+                  Hours: {contact.businessHours}
+                </div>
+              )}
             </div>
+
+            {/* Social Links */}
+            {contact?.social && (
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                {contact.social.linkedin && (
+                  <a href={contact.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-cyan-400">
+                    LinkedIn
+                  </a>
+                )}
+                {contact.social.github && (
+                  <a href={contact.social.github} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-cyan-400">
+                    GitHub
+                  </a>
+                )}
+                {contact.social.instagram && (
+                  <a href={contact.social.instagram} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-cyan-400">
+                    Instagram
+                  </a>
+                )}
+                {contact.social.facebook && (
+                  <a href={contact.social.facebook} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-cyan-400">
+                    Facebook
+                  </a>
+                )}
+                {contact.social.youtube && (
+                  <a href={contact.social.youtube} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-cyan-400">
+                    YouTube
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Categories Col */}
+          {/* Capabilities Col */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-4">
-              Core Capabilities
+              Capabilities
             </h3>
             <ul className="space-y-2.5 text-sm">
               {serviceCategories.map((item) => (
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1 group"
+                    className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1"
                   >
                     <span>{item.name}</span>
                   </Link>
@@ -144,7 +192,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="pt-8 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>© {currentYear} KNYK Labs. All rights reserved.</p>
+          <p>© {currentYear} {contact?.businessName || "KNYK Labs"}. All rights reserved.</p>
 
           <div className="flex items-center gap-6">
             <Link href="/about" className="hover:text-slate-300 transition-colors">

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, ArrowRight, MessageSquare, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { getContactConfig, buildWhatsAppLink } from "@/lib/utils/contact";
+import { buildWhatsAppLink, buildPhoneLink, buildEmailLink } from "@/lib/utils/contact";
+import { useContact } from "@/lib/context/ContactContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -19,8 +20,11 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   navLinks,
 }) => {
   const pathname = usePathname();
-  const contact = getContactConfig();
-  const whatsappUrl = buildWhatsAppLink();
+  const { contact } = useContact();
+  const whatsappUrl = buildWhatsAppLink(contact?.whatsappNumber);
+  const phoneUrl = buildPhoneLink(contact?.phone);
+  const targetEmail = contact?.email || contact?.salesEmail || contact?.supportEmail;
+  const emailUrl = buildEmailLink(targetEmail);
 
   // Close on Escape key
   useEffect(() => {
@@ -75,7 +79,11 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 K
               </div>
               <span>
-                KNYK <span className="text-cyan-400">Labs</span>
+                {contact?.businessName ? (
+                  contact.businessName
+                ) : (
+                  <>KNYK <span className="text-cyan-400">Labs</span></>
+                )}
               </span>
             </Link>
 
@@ -136,21 +144,21 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             </Button>
           )}
 
-          {(contact.phone || contact.email) && (
+          {(phoneUrl || emailUrl) && (
             <div className="flex items-center justify-around pt-2 text-xs text-slate-400">
-              {contact.phone && (
+              {phoneUrl && contact?.phone && (
                 <a
-                  href={`tel:${contact.phone.replace(/[^0-9+]/g, "")}`}
+                  href={phoneUrl}
                   className="flex items-center gap-1.5 hover:text-cyan-400"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>Call</span>
                 </a>
               )}
-              {contact.phone && contact.email && <span className="text-slate-700">•</span>}
-              {contact.email && (
+              {phoneUrl && emailUrl && <span className="text-slate-700">•</span>}
+              {emailUrl && targetEmail && (
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={emailUrl}
                   className="flex items-center gap-1.5 hover:text-teal-400"
                 >
                   <Mail className="w-3.5 h-3.5" />

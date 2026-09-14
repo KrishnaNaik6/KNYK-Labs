@@ -6,6 +6,8 @@ import { Send, MessageSquare, AlertCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Service } from "@/lib/nexis/types";
 import { createWhatsAppUrl, buildEmailLink } from "@/lib/utils/contact";
+import type { KnykPublicContact } from "@/lib/nexis/types";
+import { useContact } from "@/lib/context/ContactContext";
 
 const BUDGET_OPTIONS = [
   "Under ₹5,000",
@@ -27,9 +29,12 @@ const FALLBACK_CATEGORIES = [
 
 interface ContactFormProps {
   services?: Service[];
+  contact?: KnykPublicContact | null;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ services = [] }) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ services = [], contact: propContact }) => {
+  const context = useContact();
+  const contact = propContact !== undefined ? propContact : context.contact;
   const searchParams = useSearchParams();
   const serviceParam = searchParams.get("service") || "";
 
@@ -50,7 +55,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ services = [] }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [preparedWhatsAppUrl, setPreparedWhatsAppUrl] = useState<string | null>(null);
 
-  const emailUrl = buildEmailLink(formData.service ? `Project Enquiry: ${formData.service}` : "Project Enquiry");
+  const targetEmail = contact?.email || contact?.salesEmail || contact?.supportEmail;
+  const emailUrl = buildEmailLink(targetEmail, formData.service ? `Project Enquiry: ${formData.service}` : "Project Enquiry");
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -86,6 +92,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ services = [] }) => {
 
     // Build custom prefilled WhatsApp link with all form attributes
     const url = createWhatsAppUrl({
+      whatsappNumber: contact?.whatsappNumber,
       serviceName: formData.service || "General Inquiry",
       budget: formData.budget,
       clientName: `${formData.name} (${formData.phone}, ${formData.email})`,

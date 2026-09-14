@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ContactProvider } from "@/lib/context/ContactContext";
+import { getKnykContact } from "@/lib/nexis/contact";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,17 +70,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { contact, isAvailable } = await getKnykContact();
+
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
       <body className="bg-[#060911] text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ContactProvider contact={contact} isAvailable={isAvailable}>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer contact={contact} />
+        </ContactProvider>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getKnykServices } from "@/lib/nexis/services";
+import { getKnykContact } from "@/lib/nexis/contact";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { DirectContactCard } from "@/components/contact/DirectContactCard";
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const { services } = await getKnykServices();
+  const [{ services }, { contact, isAvailable }] = await Promise.all([
+    getKnykServices(),
+    getKnykContact(),
+  ]);
 
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28">
@@ -40,13 +44,13 @@ export default async function ContactPage() {
                 </div>
               }
             >
-              <ContactForm services={services} />
+              <ContactForm services={services} contact={contact} />
             </Suspense>
           </div>
 
           {/* Direct Contact Card Column */}
           <div className="lg:col-span-5">
-            <DirectContactCard />
+            <DirectContactCard contact={contact} isAvailable={isAvailable} />
           </div>
         </div>
       </div>

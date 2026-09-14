@@ -1,4 +1,4 @@
-export interface Category {
+﻿export interface Category {
   id: string;
   name: string;
   slug: string;
@@ -47,4 +47,40 @@ export interface PortfolioProject {
 export interface KnykCatalogResponse {
   services: Service[];
   categories?: Category[];
+}
+
+export interface KnykPublicContactAddress {
+  line?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  postalCode?: string | null;
+}
+
+export interface KnykPublicContactSocial {
+  instagram?: string | null;
+  facebook?: string | null;
+  linkedin?: string | null;
+  github?: string | null;
+  youtube?: string | null;
+}
+
+export interface KnykPublicContact {
+  businessName: string;
+  email?: string | null;
+  supportEmail?: string | null;
+  salesEmail?: string | null;
+  phone?: string | null;
+  whatsappNumber?: string | null;
+  address?: KnykPublicContactAddress | null;
+  businessHours?: string | null;
+  googleMapsUrl?: string | null;
+  websiteUrl?: string | null;
+  social?: KnykPublicContactSocial | null;
+}
+
+export interface ContactResult {
+  contact: KnykPublicContact | null;
+  isAvailable: boolean;
+  error?: string;
 }

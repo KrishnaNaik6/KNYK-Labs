@@ -1,30 +1,26 @@
-export interface ContactConfig {
-  whatsappNumber: string;
-  phone: string;
-  email: string;
-}
-
-export function getContactConfig(): ContactConfig {
-  return {
-    whatsappNumber: process.env.NEXT_PUBLIC_KNYK_WHATSAPP_NUMBER?.trim() || "",
-    phone: process.env.NEXT_PUBLIC_KNYK_PHONE?.trim() || "",
-    email: process.env.NEXT_PUBLIC_KNYK_EMAIL?.trim() || "contact@knyklabs.com",
-  };
-}
+import type { KnykPublicContact } from "@/lib/nexis/types";
 
 export interface CreateWhatsAppUrlOptions {
+  whatsappNumber?: string | null;
   serviceName?: string;
   budget?: string;
   clientName?: string;
 }
 
 /**
+ * Normalizes phone or WhatsApp strings down to clean digits.
+ */
+export function normalizeWhatsAppNumber(raw?: string | null): string {
+  if (!raw) return "";
+  return raw.replace(/[^0-9]/g, "");
+}
+
+/**
  * Builds a validated WhatsApp chat deep link with prefilled enquiry text.
- * Returns null if NEXT_PUBLIC_KNYK_WHATSAPP_NUMBER is not configured.
+ * Returns null if whatsappNumber is not provided or invalid.
  */
 export function createWhatsAppUrl(options?: CreateWhatsAppUrlOptions): string | null {
-  const { whatsappNumber } = getContactConfig();
-  const cleanNumber = whatsappNumber.replace(/[^0-9]/g, "");
+  const cleanNumber = normalizeWhatsAppNumber(options?.whatsappNumber);
 
   if (!cleanNumber || cleanNumber.length < 7) {
     return null;
@@ -48,17 +44,19 @@ export function createWhatsAppUrl(options?: CreateWhatsAppUrlOptions): string | 
 }
 
 /**
- * Backward-compatible helper for simple service links.
+ * Helper to build a WhatsApp link with optional service name.
  */
-export function buildWhatsAppLink(serviceName?: string): string | null {
-  return createWhatsAppUrl({ serviceName });
+export function buildWhatsAppLink(whatsappNumber?: string | null, serviceName?: string): string | null {
+  return createWhatsAppUrl({ whatsappNumber, serviceName });
 }
 
 /**
  * Builds a tel: URI, or null if phone number is not configured.
  */
-export function buildPhoneLink(): string | null {
-  const { phone } = getContactConfig();
+export function buildPhoneLink(phone?: string | null): string | null {
+  if (!phone) {
+    return null;
+  }
   const cleanPhone = phone.replace(/[^0-9+]/g, "");
 
   if (!cleanPhone || cleanPhone.length < 5) {
@@ -71,11 +69,25 @@ export function buildPhoneLink(): string | null {
 /**
  * Builds a mailto: URI, or null if email is not configured.
  */
-export function buildEmailLink(subject?: string): string | null {
-  const { email } = getContactConfig();
+export function buildEmailLink(email?: string | null, subject?: string): string | null {
   if (!email || !email.includes("@")) {
     return null;
   }
   const sub = subject ? `?subject=${encodeURIComponent(subject)}` : "";
   return `mailto:${email}${sub}`;
+}
+
+/**
+ * Formats a structured physical address into a readable single-line or multi-line string.
+ */
+export function formatAddress(address?: KnykPublicContact["address"]): string | null {
+  if (!address) return null;
+  const parts = [
+    address.line,
+    address.city,
+    address.state ? (address.postalCode ? `${address.state} ${address.postalCode}` : address.state) : address.postalCode,
+    address.country,
+  ].filter(Boolean);
+
+  return parts.length > 0 ? parts.join(", ") : null;
 }
