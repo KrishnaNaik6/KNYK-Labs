@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     "India",
   ],
   alternates: {
-    canonical: siteUrl,
+    canonical: "/",
   },
   openGraph: {
     title: "KNYK Labs | Software, AI & Digital Solutions Company",

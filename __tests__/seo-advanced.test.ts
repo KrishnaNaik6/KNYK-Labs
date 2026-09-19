@@ -48,7 +48,7 @@ describe("Advanced SEO & Metadata Audit", () => {
         "KNYK Labs builds custom software, modern websites, mobile applications, AI solutions, automation systems, and digital experiences for businesses."
       );
       expect((homeMetadata.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com"
+        "/"
       );
       expect((homeMetadata.openGraph as Record<string, unknown>)?.type).toBe("website");
       expect((homeMetadata.twitter as Record<string, unknown>)?.card).toBe("summary_large_image");
@@ -63,7 +63,7 @@ describe("Advanced SEO & Metadata Audit", () => {
         "Explore KNYK Labs services including custom software development, web and mobile apps, AI solutions, automation, design, and digital services."
       );
       expect((servicesMetadata.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com/services"
+        "/services"
       );
     });
 
@@ -108,7 +108,7 @@ describe("Advanced SEO & Metadata Audit", () => {
       expect(meta.description).toContain("[Generative AI]");
       expect(meta.description).toContain("Estimated delivery: 2-4 weeks.");
       expect((meta.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com/services/ai-automation-systems"
+        "/services/ai-automation-systems"
       );
       expect(meta.openGraph?.title).toBe("AI Automation Systems | KNYK Labs");
     });
@@ -124,7 +124,7 @@ describe("Advanced SEO & Metadata Audit", () => {
         "Explore software, AI, web, mobile, automation, and digital projects developed by KNYK Labs."
       );
       expect((portfolioMetadata.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com/portfolio"
+        "/portfolio"
       );
     });
 
@@ -162,7 +162,7 @@ describe("Advanced SEO & Metadata Audit", () => {
       expect(titleStr).toBe("AURA Health Diagnostic Engine | KNYK Labs Portfolio");
       expect(meta.description).toBe("Clinical intelligence and triage workflow system.");
       expect((meta.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com/portfolio/aura-health"
+        "/portfolio/aura-health"
       );
     });
 
@@ -175,7 +175,7 @@ describe("Advanced SEO & Metadata Audit", () => {
         "Learn about KNYK Labs, our engineering approach, software development capabilities, AI solutions, automation, and digital product work."
       );
       expect((aboutMetadata.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com/about"
+        "/about"
       );
     });
 
@@ -188,7 +188,7 @@ describe("Advanced SEO & Metadata Audit", () => {
         "Contact KNYK Labs for custom software development, web and mobile applications, AI solutions, automation, design, and digital services."
       );
       expect((contactMetadata.alternates as Record<string, unknown>)?.canonical).toBe(
-        "https://knyklabs.com/contact"
+        "/contact"
       );
     });
   });

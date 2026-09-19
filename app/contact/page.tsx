@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "start digital project",
   ],
   alternates: {
-    canonical: `${siteUrl}/contact`,
+    canonical: "/contact",
   },
   openGraph: {
     title: "Contact KNYK Labs | Start Your Project",

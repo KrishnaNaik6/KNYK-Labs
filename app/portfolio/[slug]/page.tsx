@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     description,
     alternates: {
-      canonical: `${siteUrl}/portfolio/${project.slug}`,
+      canonical: `/portfolio/${project.slug}`,
     },
     openGraph: {
       title: `${project.title} | KNYK Labs Portfolio`,

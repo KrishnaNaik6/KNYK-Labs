@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "digital services",
   ],
   alternates: {
-    canonical: `${siteUrl}/services`,
+    canonical: "/services",
   },
   openGraph: {
     title: "Software, AI & Digital Services | KNYK Labs",

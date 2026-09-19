@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     description,
     alternates: {
-      canonical: `${siteUrl}/services/${service.slug}`,
+      canonical: `/services/${service.slug}`,
     },
     openGraph: {
       title: `${service.name} | KNYK Labs`,
