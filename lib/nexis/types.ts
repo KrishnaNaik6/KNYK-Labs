@@ -1,11 +1,12 @@
-﻿export interface Category {
+export interface Category {
   id: string;
   name: string;
   slug: string;
   description?: string | null;
   icon?: string | null;
   displayOrder?: number;
-  isEnabled: boolean;
+  isEnabled?: boolean;
+  services?: Service[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -13,18 +14,20 @@
 export interface Service {
   id: string;
   categoryId: string;
+  categoryName?: string;
+  categorySlug?: string;
   category?: Category | null;
   name: string;
   slug: string;
-  shortDescription: string;
+  shortDescription?: string | null;
   description?: string | null;
-  startingPrice: number;
+  startingPrice: number | null;
   currency: string;
   advancePercentage: number;
-  estimatedDelivery: string;
+  estimatedDelivery?: string | null;
   imageUrl?: string | null;
   isFeatured: boolean;
-  isEnabled: boolean;
+  isEnabled?: boolean;
   displayOrder?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -104,3 +107,6 @@ export interface BrandingResult {
   isAvailable: boolean;
   error?: string;
 }
+
+export * from "@/lib/types/knyk";
+

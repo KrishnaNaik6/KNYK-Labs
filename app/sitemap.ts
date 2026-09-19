@@ -1,8 +1,11 @@
 import { MetadataRoute } from "next";
-import { getKnykCatalog } from "@/lib/nexis/services";
+import { getPublicServices } from "@/lib/api/services";
+import { getPublicPortfolio } from "@/lib/api/portfolio";
+import { getPublicWebsiteSettings } from "@/lib/api/website";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+  const { website } = await getPublicWebsiteSettings();
+  const siteUrl = website?.canonicalUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -38,19 +41,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const catalog = await getKnykCatalog();
-    if (catalog.isAvailable && catalog.services.length > 0) {
-      const serviceRoutes: MetadataRoute.Sitemap = catalog.services.map((service) => ({
-        url: `${siteUrl}/services/${service.slug}`,
-        lastModified: service.updatedAt ? new Date(service.updatedAt) : new Date(),
-        changeFrequency: "weekly",
-        priority: 0.85,
-      }));
-      return [...staticRoutes, ...serviceRoutes];
-    }
-  } catch {
-    // If NEXIS is unavailable during sitemap generation, static routes will be indexed safely
-  }
+    const [{ services }, { projects }] = await Promise.all([
+      getPublicServices(),
+      getPublicPortfolio(),
+    ]);
 
-  return staticRoutes;
+    const serviceRoutes: MetadataRoute.Sitemap = services.map((service) => ({
+      url: `${siteUrl}/services/${service.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    }));
+
+    const portfolioRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
+      url: `${siteUrl}/portfolio/${project.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.75,
+    }));
+
+    return [...staticRoutes, ...serviceRoutes, ...portfolioRoutes];
+  } catch {
+    // If NEXIS is unavailable during build, static routes will be indexed safely
+    return staticRoutes;
+  }
 }

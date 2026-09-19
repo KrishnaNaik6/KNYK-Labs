@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { getKnykCatalog } from "@/lib/nexis/services";
+import { getPublicServices } from "@/lib/api/services";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ServiceGrid } from "@/components/services/ServiceGrid";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const catalog = await getKnykCatalog();
+  const catalog = await getPublicServices();
 
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28 min-h-screen">

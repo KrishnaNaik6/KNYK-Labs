@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { getKnykServices } from "@/lib/nexis/services";
-import { getKnykContact } from "@/lib/nexis/contact";
+import { getPublicServices } from "@/lib/api/services";
+import { getPublicContact } from "@/lib/api/contact";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { DirectContactCard } from "@/components/contact/DirectContactCard";
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const [{ services }, { contact, isAvailable }] = await Promise.all([
-    getKnykServices(),
-    getKnykContact(),
+    getPublicServices(),
+    getPublicContact(),
   ]);
 
   return (

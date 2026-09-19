@@ -35,18 +35,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const { service } = result;
 
+  const description = service.shortDescription || undefined;
+
   return {
     title: `${service.name} | KNYK Labs`,
-    description: service.shortDescription,
+    description,
     openGraph: {
       title: `${service.name} — KNYK Labs`,
-      description: service.shortDescription,
+      description,
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: `${service.name} — KNYK Labs`,
-      description: service.shortDescription,
+      description,
     },
   };
 }

@@ -1,13 +1,18 @@
 import { MetadataRoute } from "next";
+import { getPublicWebsiteSettings } from "@/lib/api/website";
 
-export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const { website } = await getPublicWebsiteSettings();
+  const siteUrl = website?.canonicalUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+
+  const isNoIndex = website?.robotsBehavior?.includes("noindex");
 
   return {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: isNoIndex ? undefined : "/",
+        disallow: isNoIndex ? "/" : undefined,
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,

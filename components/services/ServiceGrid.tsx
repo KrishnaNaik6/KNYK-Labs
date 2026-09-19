@@ -79,7 +79,7 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
       const matchesSearch =
         query === "" ||
         service.name.toLowerCase().includes(query) ||
-        service.shortDescription.toLowerCase().includes(query) ||
+        (service.shortDescription ? service.shortDescription.toLowerCase().includes(query) : false) ||
         (service.category?.name && service.category.name.toLowerCase().includes(query));
 
       return matchesCategory && matchesSearch;

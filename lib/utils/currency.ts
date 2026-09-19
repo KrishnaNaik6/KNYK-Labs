@@ -1,8 +1,8 @@
 /**
  * Formats a currency value gracefully.
  */
-export function formatCurrency(amount: number, currency = "INR"): string {
-  if (typeof amount !== "number" || isNaN(amount) || amount <= 0) {
+export function formatCurrency(amount?: number | null, currency = "INR"): string {
+  if (amount == null || typeof amount !== "number" || isNaN(amount) || amount <= 0) {
     return "Custom Quote";
   }
 

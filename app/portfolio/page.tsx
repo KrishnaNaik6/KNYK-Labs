@@ -1,75 +1,127 @@
 import { Metadata } from "next";
-import { Sparkles } from "lucide-react";
-import { getPortfolioProjects } from "@/lib/nexis/client";
+import Link from "next/link";
+import Image from "next/image";
+import { Sparkles, ArrowRight, ExternalLink } from "lucide-react";
+import { getPublicPortfolio } from "@/lib/api/portfolio";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CTASection } from "@/components/sections/CTASection";
 
-export const revalidate = 120;
+export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = {
-  title: "Selected Portfolio & Work",
+  title: "Portfolio & Case Studies",
   description:
-    "Explore selected projects, case studies, and engineering achievements across software, design, and automation by KNYK Labs.",
+    "Explore real-world software architectures, visual brand identities, and custom AI automations built by KNYK Labs.",
 };
 
 export default async function PortfolioPage() {
-  const { projects, isAvailable } = await getPortfolioProjects();
+  const { projects, isAvailable } = await getPublicPortfolio();
 
   return (
-    <div className="pt-32 pb-20 md:pt-40 md:pb-28">
+    <div className="pt-32 pb-20 md:pt-40 md:pb-28 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Proof of Work"
           title={
             <>
-              Selected projects &{" "}
+              Selected projects &amp;{" "}
               <span className="text-gradient-cyan">case studies</span>
             </>
           }
           description="A curated overview of software architectures, visual branding packages, and automation workflows engineered by KNYK Labs."
         />
 
-        {/* Dynamic or Empty State */}
+        {/* Dynamic Project Grid or Empty State */}
         {isAvailable && projects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
             {projects.map((proj) => (
               <div
-                key={proj.id || proj.slug}
-                className="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 flex flex-col justify-between"
+                key={proj.id}
+                className="glass-panel glass-panel-hover rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between group"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-mono text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-full border border-cyan-500/20">
-                      {proj.category || "Case Study"}
-                    </span>
+                {/* Cover image if available */}
+                {proj.coverImageUrl && (
+                  <Link href={`/portfolio/${proj.slug}`} className="block relative aspect-video w-full overflow-hidden bg-slate-900">
+                    <Image
+                      src={proj.coverImageUrl}
+                      alt={proj.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#090e1b] via-transparent to-transparent opacity-80" />
+                  </Link>
+                )}
+
+                <div className="p-7 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge variant="cyan" className="text-[11px]">
+                        {proj.category}
+                      </Badge>
+                      {proj.isFeatured && (
+                        <span className="text-[10px] uppercase font-mono tracking-widest text-teal-400 bg-teal-950/60 px-2 py-0.5 rounded border border-teal-500/30">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+
+                    <Link href={`/portfolio/${proj.slug}`}>
+                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+                        {proj.title}
+                      </h3>
+                    </Link>
+
+                    <p className="text-sm text-slate-300 leading-relaxed mb-6">
+                      {proj.summary}
+                    </p>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {proj.title}
-                  </h3>
+                  <div>
+                    {/* Technology tags */}
+                    {proj.technologies && proj.technologies.length > 0 && (
+                      <div className="pt-4 border-t border-slate-800/80 flex flex-wrap gap-1.5 mb-4">
+                        {proj.technologies.slice(0, 4).map((tech, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 rounded bg-slate-900 text-[11px] text-slate-400 font-mono border border-slate-800"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-                  <p className="text-sm text-slate-300 leading-relaxed mb-6">
-                    {proj.summary}
-                  </p>
-                </div>
+                    <div className="flex items-center justify-between pt-2">
+                      <Link
+                        href={`/portfolio/${proj.slug}`}
+                        className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 group-hover:underline"
+                      >
+                        <span>View Project Breakdown</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
 
-                <div className="pt-4 border-t border-slate-800/80 flex flex-wrap gap-1.5">
-                  {proj.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded bg-slate-900 text-[11px] text-slate-400 font-mono border border-slate-800"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                      {proj.projectUrl && (
+                        <a
+                          href={proj.projectUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-500 hover:text-slate-300 transition-colors p-1"
+                          aria-label={`Visit live demo for ${proj.title}`}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          /* Elegant Coming Soon State */
+          /* Controlled Empty State */
           <div className="max-w-3xl mx-auto my-12 text-center">
             <div className="glass-panel rounded-3xl p-10 md:p-16 border border-cyan-500/20 shadow-2xl shadow-cyan-950/30 space-y-6">
               <div className="w-16 h-16 mx-auto rounded-2xl bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
@@ -81,7 +133,7 @@ export default async function PortfolioPage() {
               </h3>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-                We are currently curating in-depth case studies, live demos, and design breakdowns from our latest client engagements for public release.
+                We are currently curating in-depth case studies, live demos, and technical breakdowns from our latest client engagements for public release.
               </p>
 
               <div className="pt-2 text-xs text-slate-400 bg-slate-900/60 rounded-xl p-4 border border-slate-800 max-w-md mx-auto">

@@ -33,7 +33,7 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({ featuredServ
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {featuredServices.map((service) => {
-            const categoryName = service.category?.name || "Digital Service";
+            const categoryName = service.category?.name || service.categoryName || "Digital Service";
             const formattedPrice = formatCurrency(service.startingPrice, service.currency);
             const formattedDelivery = formatDelivery(service.estimatedDelivery);
 

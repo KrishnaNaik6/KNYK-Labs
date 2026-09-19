@@ -11,7 +11,7 @@ export interface ServiceCardProps {
 }
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
-  const categoryName = service.category?.name || "Digital Service";
+  const categoryName = service.category?.name || service.categoryName || "Digital Service";
   const formattedPrice = formatCurrency(service.startingPrice, service.currency);
   const formattedDelivery = formatDelivery(service.estimatedDelivery);
 
