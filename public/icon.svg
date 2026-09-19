@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="knykGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="50%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#67e8f9" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="24" fill="url(#knykGradient)" />
+  <path d="M 32 22 L 44 22 L 44 45 L 63 22 L 77 22 L 53 50 L 78 78 L 64 78 L 44 55 L 44 78 L 32 78 Z" fill="#020617" />
+</svg>

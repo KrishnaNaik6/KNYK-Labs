@@ -6,6 +6,7 @@ export interface SectionHeadingProps {
   title: React.ReactNode;
   description?: React.ReactNode;
   align?: "left" | "center";
+  as?: "h1" | "h2" | "h3";
   className?: string;
 }
 
@@ -14,6 +15,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
   title,
   description,
   align = "center",
+  as: Component = "h2",
   className = "",
 }) => {
   const isCenter = align === "center";
@@ -30,9 +32,9 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
         </div>
       )}
 
-      <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+      <Component className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
         {title}
-      </h2>
+      </Component>
 
       {description && (
         <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">

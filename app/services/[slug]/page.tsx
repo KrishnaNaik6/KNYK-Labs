@@ -16,11 +16,16 @@ import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CallButton } from "@/components/ui/CallButton";
 
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getServiceJsonLd, getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 export const revalidate = 60;
+
+const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -31,21 +36,38 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const { service } = result;
-
-  const description = service.shortDescription || undefined;
+  const siteUrl = defaultSiteUrl;
+  const deliveryInfo = service.estimatedDelivery ? ` Estimated delivery: ${service.estimatedDelivery}.` : "";
+  const categoryInfo = service.categoryName ? ` [${service.categoryName}]` : "";
+  const description =
+    service.shortDescription
+      ? `${service.shortDescription}${categoryInfo}${deliveryInfo}`
+      : service.description
+      ? service.description.slice(0, 160)
+      : `Explore ${service.name} services by KNYK Labs. Custom engineering, transparent milestones, and structured execution.`;
 
   return {
-    title: `${service.name} | KNYK Labs`,
+    title: {
+      absolute: `${service.name} | KNYK Labs`,
+    },
     description,
+    alternates: {
+      canonical: `${siteUrl}/services/${service.slug}`,
+    },
     openGraph: {
-      title: `${service.name} — KNYK Labs`,
+      title: `${service.name} | KNYK Labs`,
       description,
+      url: `${siteUrl}/services/${service.slug}`,
       type: "article",
+      images: service.imageUrl
+        ? [{ url: service.imageUrl, alt: `${service.name} service preview` }]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${service.name} — KNYK Labs`,
+      title: `${service.name} | KNYK Labs`,
       description,
+      images: service.imageUrl ? [service.imageUrl] : undefined,
     },
   };
 }
@@ -91,13 +113,22 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   }
 
   const { service } = result;
+  const siteUrl = defaultSiteUrl;
   const formattedPrice = formatCurrency(service.startingPrice, service.currency);
   const formattedDelivery = formatDelivery(service.estimatedDelivery);
   const formattedAdvance = formatAdvance(service.advancePercentage);
   const startProjectUrl = `/contact?service=${encodeURIComponent(service.slug)}`;
 
+  const serviceJsonLd = getServiceJsonLd(service, siteUrl);
+  const breadcrumbJsonLd = getBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "Services", url: `${siteUrl}/services` },
+    { name: service.name, url: `${siteUrl}/services/${service.slug}` },
+  ]);
+
   return (
     <div className="pt-32 pb-24 md:pt-40 md:pb-32">
+      <JsonLd schema={[serviceJsonLd, breadcrumbJsonLd]} />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Navigation Breadcrumb */}
         <div>

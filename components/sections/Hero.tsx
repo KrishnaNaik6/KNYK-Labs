@@ -25,9 +25,8 @@ export const Hero: React.FC = () => {
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.08]">
-              Build. Design.{" "}
-              <span className="text-gradient-cyan">Automate.</span>{" "}
-              Grow.
+              Software, AI &amp; Digital Solutions for{" "}
+              <span className="text-gradient-cyan">Modern Businesses</span>
             </h1>
 
             {/* Supporting Copy */}

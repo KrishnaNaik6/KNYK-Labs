@@ -1,11 +1,41 @@
 import { Metadata } from "next";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTASection } from "@/components/sections/CTASection";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: {
+    absolute: "About KNYK Labs | Software & AI Solutions",
+  },
   description:
-    "Learn about KNYK Labs: our philosophy, multidisciplinary approach to software, design, and automation, and our commitment to practical business outcomes.",
+    "Learn about KNYK Labs, our engineering approach, software development capabilities, AI solutions, automation, and digital product work.",
+  keywords: [
+    "About KNYK Labs",
+    "software engineering studio",
+    "digital solutions company",
+    "AI development Bengaluru",
+    "software developers India",
+    "multidisciplinary digital studio",
+  ],
+  alternates: {
+    canonical: `${siteUrl}/about`,
+  },
+  openGraph: {
+    title: "About KNYK Labs | Software & AI Solutions",
+    description:
+      "Learn about KNYK Labs, our engineering approach, software development capabilities, AI solutions, automation, and digital product work.",
+    url: `${siteUrl}/about`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About KNYK Labs | Software & AI Solutions",
+    description:
+      "Learn about KNYK Labs, our engineering approach, software development capabilities, AI solutions, automation, and digital product work.",
+  },
 };
 
 export default function AboutPage() {
@@ -32,26 +62,33 @@ export default function AboutPage() {
     },
   ];
 
+  const breadcrumbJsonLd = getBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "About", url: `${siteUrl}/about` },
+  ]);
+
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28">
+      <JsonLd schema={breadcrumbJsonLd} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
+          as="h1"
           eyebrow="Our Story & Philosophy"
           title={
             <>
-              Building digital solutions that{" "}
-              <span className="text-gradient-cyan">stand the test of execution</span>
+              Building Digital Solutions with{" "}
+              <span className="text-gradient-cyan">Engineering at the Core</span>
             </>
           }
-          description="KNYK Labs is an independent digital studio focused on high-craft software engineering, purposeful brand design, and modern workflow automation."
+          description="KNYK Labs is an independent digital studio focused on high-craft software engineering, purposeful brand design, and modern workflow automation based in Bengaluru, India."
         />
 
         {/* Story Section */}
         <div className="max-w-4xl mx-auto mb-20 space-y-8 text-slate-300 text-base md:text-lg leading-relaxed">
           <div className="glass-panel rounded-3xl p-8 md:p-12 border border-slate-800/80 space-y-6">
-            <h3 className="text-2xl font-bold text-white tracking-tight">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
               Why KNYK Labs Exists
-            </h3>
+            </h2>
 
             <p>
               In a digital landscape filled with bloated agencies, fragmented freelancers, and generic cookie-cutter templates, ambitious businesses struggle to find reliable partners who can seamlessly execute across both code and creative direction.
@@ -70,6 +107,7 @@ export default function AboutPage() {
         {/* Guiding Principles */}
         <div className="mb-20">
           <SectionHeading
+            as="h2"
             eyebrow="Core Values"
             title="What guides our work"
             description="Our foundational operating principles for every client engagement and internal system."
@@ -85,9 +123,9 @@ export default function AboutPage() {
                   <span className="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-500/30 text-cyan-400 font-mono text-xs flex items-center justify-center font-bold">
                     0{idx + 1}
                   </span>
-                  <h4 className="text-lg font-bold text-white tracking-tight">
+                  <h3 className="text-lg font-bold text-white tracking-tight">
                     {p.title}
-                  </h4>
+                  </h3>
                 </div>
                 <p className="text-sm text-slate-300 leading-relaxed pl-11">
                   {p.description}
@@ -100,9 +138,9 @@ export default function AboutPage() {
         {/* Technology & Tooling */}
         <div className="max-w-5xl mx-auto mb-20">
           <div className="glass-panel rounded-3xl p-8 md:p-12 border border-cyan-500/20 text-center">
-            <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
-              Modern Tooling & Architecture
-            </h3>
+            <h2 className="text-2xl font-bold text-white mb-4 tracking-tight">
+              Modern Tooling &amp; Architecture
+            </h2>
             <p className="text-slate-300 max-w-2xl mx-auto text-sm md:text-base leading-relaxed mb-8">
               We leverage modern technology stacks—Next.js App Router, TypeScript, Tailwind CSS, PostgreSQL, AI APIs, and cloud services—orchestrated through our centralized NEXIS control infrastructure.
             </p>
@@ -124,7 +162,7 @@ export default function AboutPage() {
                 PostgreSQL
               </span>
               <span className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
-                LLM & Automation APIs
+                LLM &amp; Automation APIs
               </span>
               <span className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
                 NEXIS Control

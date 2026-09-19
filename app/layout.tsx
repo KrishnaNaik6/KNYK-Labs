@@ -66,12 +66,31 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords,
     authors: [{ name: "KNYK Labs", url: siteUrl }],
     creator: "KNYK Labs",
-    icons: branding?.favicon?.url
-      ? {
-          icon: branding.favicon.url,
-          apple: branding.brandMark?.url || branding.favicon.url,
-        }
-      : undefined,
+    icons: {
+      icon: [
+        {
+          url: branding?.favicon?.url || "/icon",
+          sizes: "any",
+        },
+        {
+          url: branding?.brandMark?.url || "/icon",
+          sizes: "32x32",
+          type: "image/png",
+        },
+        {
+          url: "/icon.svg",
+          type: "image/svg+xml",
+        },
+      ],
+      apple: [
+        {
+          url: branding?.brandMark?.url || branding?.favicon?.url || "/apple-icon",
+          sizes: "180x180",
+          type: "image/png",
+        },
+      ],
+      shortcut: [branding?.favicon?.url || "/icon"],
+    },
     openGraph: {
       type: "website",
       locale: "en_US",

@@ -8,27 +8,64 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CTASection } from "@/components/sections/CTASection";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
 
 export const revalidate = 120; // 2 minutes
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+
 export const metadata: Metadata = {
-  title: "Portfolio & Case Studies",
+  title: {
+    absolute: "Portfolio | Software, AI & Digital Projects | KNYK Labs",
+  },
   description:
-    "Explore real-world software architectures, visual brand identities, and custom AI automations built by KNYK Labs.",
+    "Explore software, AI, web, mobile, automation, and digital projects developed by KNYK Labs.",
+  keywords: [
+    "KNYK Labs portfolio",
+    "software case studies",
+    "web development projects",
+    "AI solutions portfolio",
+    "mobile application case studies",
+    "digital studio work",
+  ],
+  alternates: {
+    canonical: `${siteUrl}/portfolio`,
+  },
+  openGraph: {
+    title: "Portfolio | Software, AI & Digital Projects | KNYK Labs",
+    description:
+      "Explore software, AI, web, mobile, automation, and digital projects developed by KNYK Labs.",
+    url: `${siteUrl}/portfolio`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Portfolio | Software, AI & Digital Projects | KNYK Labs",
+    description:
+      "Explore software, AI, web, mobile, automation, and digital projects developed by KNYK Labs.",
+  },
 };
 
 export default async function PortfolioPage() {
   const { projects, isAvailable } = await getPublicPortfolio();
 
+  const breadcrumbJsonLd = getBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "Portfolio", url: `${siteUrl}/portfolio` },
+  ]);
+
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28 min-h-screen">
+      <JsonLd schema={breadcrumbJsonLd} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
+          as="h1"
           eyebrow="Proof of Work"
           title={
             <>
-              Selected projects &amp;{" "}
-              <span className="text-gradient-cyan">case studies</span>
+              Selected Work |{" "}
+              <span className="text-gradient-cyan">Software &amp; AI Projects</span>
             </>
           }
           description="A curated overview of software architectures, visual branding packages, and automation workflows engineered by KNYK Labs."
@@ -47,7 +84,7 @@ export default async function PortfolioPage() {
                   <Link href={`/portfolio/${proj.slug}`} className="block relative aspect-video w-full overflow-hidden bg-slate-900">
                     <Image
                       src={proj.coverImageUrl}
-                      alt={proj.title}
+                      alt={`${proj.title} project preview`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -128,9 +165,9 @@ export default async function PortfolioPage() {
                 <Sparkles className="w-8 h-8" />
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 Selected Work is Coming Soon
-              </h3>
+              </h2>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
                 We are currently curating in-depth case studies, live demos, and technical breakdowns from our latest client engagements for public release.

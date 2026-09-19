@@ -5,13 +5,43 @@ import { getPublicContact } from "@/lib/api/contact";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { DirectContactCard } from "@/components/contact/DirectContactCard";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
 
 export const revalidate = 60;
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+
 export const metadata: Metadata = {
-  title: "Contact & Project Enquiries | KNYK Labs",
+  title: {
+    absolute: "Contact KNYK Labs | Start Your Project",
+  },
   description:
-    "Get in touch with KNYK Labs. Request a custom quote, scope your next digital project, or connect directly via WhatsApp and phone.",
+    "Contact KNYK Labs for custom software development, web and mobile applications, AI solutions, automation, design, and digital services.",
+  keywords: [
+    "Contact KNYK Labs",
+    "hire software developers",
+    "software company contact Bengaluru",
+    "custom software quote",
+    "AI development consultation",
+    "start digital project",
+  ],
+  alternates: {
+    canonical: `${siteUrl}/contact`,
+  },
+  openGraph: {
+    title: "Contact KNYK Labs | Start Your Project",
+    description:
+      "Contact KNYK Labs for custom software development, web and mobile applications, AI solutions, automation, design, and digital services.",
+    url: `${siteUrl}/contact`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact KNYK Labs | Start Your Project",
+    description:
+      "Contact KNYK Labs for custom software development, web and mobile applications, AI solutions, automation, design, and digital services.",
+  },
 };
 
 export default async function ContactPage() {
@@ -20,15 +50,22 @@ export default async function ContactPage() {
     getPublicContact(),
   ]);
 
+  const breadcrumbJsonLd = getBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "Contact", url: `${siteUrl}/contact` },
+  ]);
+
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28">
+      <JsonLd schema={breadcrumbJsonLd} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
+          as="h1"
           eyebrow="Initiate Engagement"
           title={
             <>
-              Let&apos;s talk about your{" "}
-              <span className="text-gradient-cyan">next milestone</span>
+              Let&apos;s Build{" "}
+              <span className="text-gradient-cyan">Something Together</span>
             </>
           }
           description="Submit your project details below for a structured quotation, or connect immediately over WhatsApp for real-time consultation."

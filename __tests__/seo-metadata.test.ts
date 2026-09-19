@@ -41,7 +41,7 @@ describe("Dynamic SEO Generation (Robots & Sitemap)", () => {
     const rules = Array.isArray(result.rules) ? result.rules[0] : result.rules;
 
     expect(rules?.allow).toBe("/");
-    expect(rules?.disallow).toBeUndefined();
+    expect(rules?.disallow).toEqual(["/api/"]);
     expect(result.sitemap).toBe("https://knyklabs.com/sitemap.xml");
   });
 

@@ -16,11 +16,16 @@ import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CTASection } from "@/components/sections/CTASection";
 
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getCreativeWorkJsonLd, getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 export const revalidate = 120; // 2 minutes
+
+const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -30,18 +35,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     notFound();
   }
 
+  const siteUrl = defaultSiteUrl;
+  const description = project.summary || project.description || `Case study for ${project.title} by KNYK Labs.`;
+
   return {
-    title: `${project.title} | KNYK Labs Portfolio`,
-    description: project.summary,
+    title: {
+      absolute: `${project.title} | KNYK Labs Portfolio`,
+    },
+    description,
+    alternates: {
+      canonical: `${siteUrl}/portfolio/${project.slug}`,
+    },
     openGraph: {
-      title: `${project.title} — KNYK Labs Case Study`,
-      description: project.summary,
-      images: project.coverImageUrl ? [{ url: project.coverImageUrl }] : undefined,
+      title: `${project.title} | KNYK Labs Portfolio`,
+      description,
+      url: `${siteUrl}/portfolio/${project.slug}`,
+      type: "article",
+      images: project.coverImageUrl
+        ? [{ url: project.coverImageUrl, alt: `${project.title} project preview` }]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${project.title} — KNYK Labs`,
-      description: project.summary,
+      title: `${project.title} | KNYK Labs Portfolio`,
+      description,
       images: project.coverImageUrl ? [project.coverImageUrl] : undefined,
     },
   };
@@ -75,8 +92,17 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const siteUrl = defaultSiteUrl;
+  const creativeWorkJsonLd = getCreativeWorkJsonLd(project, siteUrl);
+  const breadcrumbJsonLd = getBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "Portfolio", url: `${siteUrl}/portfolio` },
+    { name: project.title, url: `${siteUrl}/portfolio/${project.slug}` },
+  ]);
+
   return (
     <div className="pt-32 pb-20 md:pt-40 md:pb-28 min-h-screen">
+      <JsonLd schema={[creativeWorkJsonLd, breadcrumbJsonLd]} />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Link */}
         <div className="mb-8">
@@ -148,7 +174,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           <div className="relative aspect-video w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl mb-12 bg-slate-900">
             <Image
               src={project.coverImageUrl}
-              alt={project.title}
+              alt={`${project.title} cover preview`}
               fill
               className="object-cover"
               priority

@@ -53,8 +53,8 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
               <Link href="/" className="inline-flex items-center gap-2.5">
                 <Image
                   src={footerLogo.url}
-                  alt={footerLogo.alt || "KNYK Labs"}
-                  width={footerLogo.width || 160}
+                  alt={footerLogo.alt || "KNYK Labs logo"}
+                  width={footerLogo.width || 140}
                   height={footerLogo.height || 40}
                   className="h-9 w-auto max-w-[180px] object-contain drop-shadow-sm"
                   onError={() => setImgError(true)}

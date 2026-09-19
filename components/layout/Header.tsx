@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <Image
                     src={activeLogo.url}
-                    alt={activeLogo.alt || "KNYK Labs"}
+                    alt={activeLogo.alt || "KNYK Labs logo"}
                     width={activeLogo.width || 160}
                     height={activeLogo.height || 40}
                     className="h-9 w-auto max-w-[180px] object-contain drop-shadow-sm transition-transform group-hover:scale-[1.02]"

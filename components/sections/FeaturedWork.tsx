@@ -66,7 +66,7 @@ export const FeaturedWork: React.FC<FeaturedWorkProps> = ({ projects = [] }) => 
                   <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
                     <Image
                       src={item.coverImageUrl}
-                      alt={item.title}
+                      alt={`${item.title} project showcase`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
