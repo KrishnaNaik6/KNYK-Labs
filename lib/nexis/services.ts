@@ -1,7 +1,7 @@
 import { getKnykServiceCatalog, getKnykContact, CatalogResult } from "./client";
-import { Service, Category, ContactResult, KnykPublicContact } from "./types";
+import { Service, ContactResult, KnykPublicContact, Category } from "./types";
 
-export type { ContactResult, KnykPublicContact };
+export type { ContactResult, KnykPublicContact, Category };
 export { getKnykContact };
 
 export interface ServiceDetailResult {
@@ -81,47 +81,4 @@ export async function getKnykServiceBySlug(slug: string): Promise<ServiceDetailR
 /**
  * Group services by Category for structured rendering.
  */
-export function groupServicesByCategory(
-  services: Service[],
-  categories: Category[]
-): Array<{
-  category: Category;
-  services: Service[];
-}> {
-  const categoryMap = new Map<string, { category: Category; services: Service[] }>();
-
-  // Initialize with defined categories
-  for (const cat of categories) {
-    categoryMap.set(cat.id || cat.slug, {
-      category: cat,
-      services: [],
-    });
-  }
-
-  // Populate services into their respective categories
-  for (const service of services) {
-    const catId = service.category?.id || service.category?.slug || service.categoryId;
-    if (catId && categoryMap.has(catId)) {
-      categoryMap.get(catId)!.services.push(service);
-    } else {
-      // Fallback category if category was not pre-registered
-      const fallbackId = catId || "general";
-      if (!categoryMap.has(fallbackId)) {
-        const catObj: Category = service.category ?? {
-          id: fallbackId,
-          name: "General Capabilities",
-          slug: fallbackId,
-          isEnabled: true,
-        };
-        categoryMap.set(fallbackId, {
-          category: catObj,
-          services: [],
-        });
-      }
-      categoryMap.get(fallbackId)!.services.push(service);
-    }
-  }
-
-  // Only return categories that have at least one enabled service
-  return Array.from(categoryMap.values()).filter((group) => group.services.length > 0);
-}
+export { groupServicesByCategory } from "@/lib/api/services";

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useBranding } from "@/lib/context/BrandingContext";
+import { useWebsite } from "@/lib/context/WebsiteContext";
 import Link from "next/link";
 import { MessageSquare, Phone, Mail, MapPin } from "lucide-react";
 import { buildWhatsAppLink, buildPhoneLink, buildEmailLink, formatAddress } from "@/lib/utils/contact";
@@ -10,6 +11,7 @@ import type { KnykPublicContact } from "@/lib/nexis/types";
 
 export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ contact }) => {
   const { branding } = useBranding();
+  const { website } = useWebsite();
   const [imgError, setImgError] = useState(false);
   const footerLogo = branding?.primaryLogo || branding?.brandMark;
   const currentYear = new Date().getFullYear();
@@ -18,6 +20,12 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
   const targetEmail = contact?.email || contact?.salesEmail || contact?.supportEmail;
   const emailUrl = buildEmailLink(targetEmail);
   const formattedAddress = formatAddress(contact?.address);
+  const footerDescription =
+    website?.footerDescription ||
+    "Digital solutions studio helping businesses, creators, and teams build standout software, branding, multimedia, and automation systems.";
+  const copyrightText = website?.copyrightText
+    ? (website.copyrightText.startsWith("©") ? website.copyrightText : `© ${currentYear} ${website.copyrightText}`)
+    : `© ${currentYear} ${contact?.businessName || "KNYK Labs"}. All rights reserved.`;
 
   const serviceCategories = [
     { name: "Software & Development", href: "/services" },
@@ -68,7 +76,7 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
             )}
 
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-              Digital solutions studio helping businesses, creators, and teams build standout software, branding, multimedia, and automation systems.
+              {footerDescription}
             </p>
 
             <div className="pt-2 flex flex-col space-y-2 text-sm text-slate-300">
@@ -212,7 +220,7 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
 
         {/* Bottom bar */}
         <div className="pt-8 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>© {currentYear} {contact?.businessName || "KNYK Labs"}. All rights reserved.</p>
+          <p>{copyrightText}</p>
 
           <div className="flex items-center gap-6">
             <Link href="/about" className="hover:text-slate-300 transition-colors">

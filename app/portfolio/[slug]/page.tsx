@@ -27,10 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { project } = await getPublicPortfolioProjectBySlug(slug);
 
   if (!project) {
-    return {
-      title: "Project Not Found | KNYK Labs",
-      description: "The requested portfolio project could not be found.",
-    };
+    notFound();
   }
 
   return {

@@ -26,7 +26,7 @@ export interface NexisFetchOptions extends RequestInit {
   timeoutMs?: number;
 }
 
-const DEFAULT_TIMEOUT_MS = 6000;
+const DEFAULT_TIMEOUT_MS = Number(process.env.NEXIS_TIMEOUT_MS) || 10000;
 
 /**
  * Returns the sanitized base URL for NEXIS API.

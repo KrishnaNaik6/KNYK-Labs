@@ -9,7 +9,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-import { getKnykServiceBySlug } from "@/lib/nexis/services";
+import { getPublicServiceBySlug } from "@/lib/api/services";
 import { formatCurrency, formatDelivery, formatAdvance } from "@/lib/utils/currency";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -24,13 +24,10 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getKnykServiceBySlug(slug);
+  const result = await getPublicServiceBySlug(slug);
 
   if (!result.service) {
-    return {
-      title: "Service Not Found | KNYK Labs",
-      description: "The requested KNYK Labs service could not be found.",
-    };
+    notFound();
   }
 
   const { service } = result;
@@ -66,7 +63,7 @@ const PROCESS_STEPS = [
 
 export default async function ServiceDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const result = await getKnykServiceBySlug(slug);
+  const result = await getPublicServiceBySlug(slug);
 
   if (!result.isAvailable && !result.service) {
     return (
@@ -118,7 +115,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2.5">
               <Badge variant="cyan">
-                {service.category?.name || "Digital Service"}
+                {service.categoryName || "Digital Service"}
               </Badge>
               {service.isFeatured && (
                 <Badge variant="featured" className="gap-1">

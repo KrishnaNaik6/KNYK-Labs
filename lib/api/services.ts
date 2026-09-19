@@ -178,3 +178,49 @@ export async function getPublicServiceBySlug(slug: string): Promise<ServiceDetai
     isAvailable: true,
   };
 }
+
+/**
+ * Group services by Category for structured rendering.
+ */
+export function groupServicesByCategory(
+  services: KnykPublicService[],
+  categories: KnykPublicServiceCategory[]
+): Array<{
+  category: KnykPublicServiceCategory;
+  services: KnykPublicService[];
+}> {
+  const categoryMap = new Map<string, { category: KnykPublicServiceCategory; services: KnykPublicService[] }>();
+
+  for (const cat of categories) {
+    categoryMap.set(cat.id || cat.slug, {
+      category: cat,
+      services: [],
+    });
+  }
+
+  for (const service of services) {
+    const catId = service.categoryId || service.categorySlug;
+    if (catId && categoryMap.has(catId)) {
+      categoryMap.get(catId)!.services.push(service);
+    } else {
+      const fallbackId = catId || "general";
+      if (!categoryMap.has(fallbackId)) {
+        const catObj: KnykPublicServiceCategory = {
+          id: fallbackId,
+          name: service.categoryName || "General Capabilities",
+          slug: service.categorySlug || fallbackId,
+          description: null,
+          icon: null,
+          displayOrder: 99,
+        };
+        categoryMap.set(fallbackId, {
+          category: catObj,
+          services: [],
+        });
+      }
+      categoryMap.get(fallbackId)!.services.push(service);
+    }
+  }
+
+  return Array.from(categoryMap.values()).filter((group) => group.services.length > 0);
+}

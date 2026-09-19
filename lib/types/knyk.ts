@@ -38,9 +38,9 @@ export interface KnykPublicServiceCategory {
   id: string;
   name: string;
   slug: string;
-  description: string | null;
-  icon: string | null;
-  displayOrder: number;
+  description?: string | null;
+  icon?: string | null;
+  displayOrder?: number;
 }
 
 export interface KnykPublicService {
@@ -50,15 +50,15 @@ export interface KnykPublicService {
   categorySlug?: string;
   name: string;
   slug: string;
-  shortDescription: string | null;
-  description: string | null;
+  shortDescription?: string | null;
+  description?: string | null;
   startingPrice: number | null;
   currency: string;
   advancePercentage: number;
-  estimatedDelivery: string | null;
-  imageUrl: string | null;
+  estimatedDelivery?: string | null;
+  imageUrl?: string | null;
   isFeatured: boolean;
-  displayOrder: number;
+  displayOrder?: number;
 }
 
 export interface KnykPublicServiceCatalog {
