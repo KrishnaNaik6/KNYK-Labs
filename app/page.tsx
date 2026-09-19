@@ -19,7 +19,7 @@ import { getOrganizationJsonLd, getWebSiteJsonLd } from "@/lib/seo/structured-da
 
 export const revalidate = 60;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com").replace(/\/+$/, "");
 
 export const metadata: Metadata = {
   title: "KNYK Labs | Software, AI & Digital Solutions Company",

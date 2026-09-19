@@ -3,10 +3,11 @@ import { getPublicWebsiteSettings } from "@/lib/api/website";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const { website } = await getPublicWebsiteSettings();
-  const siteUrl =
+  const siteUrl = (
     website?.canonicalUrl ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://knyklabs.com";
+    "https://knyklabs.com"
+  ).replace(/\/+$/, "");
 
   const isNoIndex = Boolean(website?.robotsBehavior?.includes("noindex"));
 

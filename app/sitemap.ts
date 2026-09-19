@@ -5,10 +5,11 @@ import { getPublicWebsiteSettings } from "@/lib/api/website";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { website } = await getPublicWebsiteSettings();
-  const siteUrl =
+  const siteUrl = (
     website?.canonicalUrl ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://knyklabs.com";
+    "https://knyklabs.com"
+  ).replace(/\/+$/, "");
 
   // Core static marketing routes
   const staticRoutes: MetadataRoute.Sitemap = [

@@ -25,7 +25,7 @@ interface PageProps {
 
 export const revalidate = 120; // 2 minutes
 
-const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+const defaultSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com").replace(/\/+$/, "");
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

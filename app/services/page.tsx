@@ -11,7 +11,7 @@ import { getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
 
 export const revalidate = 60;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com").replace(/\/+$/, "");
 
 export const metadata: Metadata = {
   title: {
