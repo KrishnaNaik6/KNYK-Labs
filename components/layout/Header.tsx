@@ -23,9 +23,7 @@ export const Header: React.FC = () => {
   const pathname = usePathname();
   const { branding } = useBranding();
 
-  const primaryLogo = branding?.primaryLogo;
-  const brandMark = branding?.brandMark;
-  const activeLogo = primaryLogo || brandMark;
+  const brandMark = branding?.brandMark || branding?.primaryLogo;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,44 +38,33 @@ export const Header: React.FC = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? "bg-[#070b14]/90 backdrop-blur-md border-b border-slate-800/80 py-3.5 shadow-lg shadow-black/40"
-            : "bg-transparent py-5"
+            ? "bg-[#070b14]/90 backdrop-blur-md border-b border-slate-800/80 py-2.5 sm:py-3 shadow-lg shadow-black/40"
+            : "bg-transparent py-3.5 sm:py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Brand Logo with fallback hierarchy: Primary Logo -> Brand Mark -> Text fallback */}
+            {/* Brand Mark Only (Enlarged and styled) */}
             <Link
               href="/"
-              className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg"
+              className="flex items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-full"
               aria-label="KNYK Labs Homepage"
             >
-              {activeLogo && !imgError ? (
-                <div className="flex items-center gap-2.5">
+              {brandMark && !imgError ? (
+                <div className="relative flex items-center justify-center">
                   <Image
-                    src={activeLogo.url}
-                    alt={activeLogo.alt || "KNYK Labs logo"}
-                    width={activeLogo.width || 160}
-                    height={activeLogo.height || 40}
-                    className="h-9 w-auto max-w-[180px] object-contain drop-shadow-sm transition-transform group-hover:scale-[1.02]"
+                    src={brandMark.url}
+                    alt={brandMark.alt || "KNYK Labs brand mark"}
+                    width={brandMark.width || 180}
+                    height={brandMark.height || 180}
+                    className="h-14 w-14 sm:h-16 sm:w-16 rounded-full object-contain drop-shadow-[0_4px_16px_rgba(6,182,212,0.3)] transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_6px_22px_rgba(6,182,212,0.45)]"
                     priority
                     onError={() => setImgError(true)}
                   />
-                  {/* If using circular brandMark only, show text alongside */}
-                  {!primaryLogo && brandMark && (
-                    <div className="flex flex-col">
-                      <span className="text-xl font-bold tracking-tight text-white leading-none">
-                        KNYK <span className="text-cyan-400">Labs</span>
-                      </span>
-                      <span className="text-[10px] tracking-widest uppercase text-slate-400 font-semibold mt-0.5">
-                        Digital Studio
-                      </span>
-                    </div>
-                  )}
                 </div>
               ) : (
-                <>
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-400 to-cyan-300 flex items-center justify-center text-slate-950 font-black text-base shadow-md shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-400 to-cyan-300 flex items-center justify-center text-slate-950 font-black text-base shadow-md shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all">
                     K
                   </div>
                   <div className="flex flex-col">
@@ -88,7 +75,7 @@ export const Header: React.FC = () => {
                       Digital Studio
                     </span>
                   </div>
-                </>
+                </div>
               )}
             </Link>
 

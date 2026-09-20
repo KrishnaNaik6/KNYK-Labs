@@ -81,41 +81,32 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             <Link
               href="/"
               onClick={onClose}
-              className="text-lg font-bold tracking-tight text-white flex items-center gap-2"
+              className="flex items-center group focus-visible:outline-none"
+              aria-label="KNYK Labs Homepage"
             >
               {mobileLogo && !imgError ? (
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={mobileLogo.url}
-                    alt={mobileLogo.alt || "KNYK Labs"}
-                    width={mobileLogo.width || 36}
-                    height={mobileLogo.height || 36}
-                    className="h-8 w-auto max-w-[120px] object-contain rounded-lg"
-                    onError={() => setImgError(true)}
-                  />
-                  {branding?.brandMark && (
-                    <span>
-                      {contact?.businessName ? (
-                        contact.businessName
-                      ) : (
-                        <>KNYK <span className="text-cyan-400">Labs</span></>
-                      )}
-                    </span>
-                  )}
-                </div>
+                <Image
+                  src={mobileLogo.url}
+                  alt={mobileLogo.alt || "KNYK Labs brand mark"}
+                  width={mobileLogo.width || 120}
+                  height={mobileLogo.height || 120}
+                  className="h-12 w-12 rounded-full object-contain drop-shadow-[0_2px_12px_rgba(6,182,212,0.3)] transition-transform group-hover:scale-105"
+                  onError={() => setImgError(true)}
+                />
               ) : (
-                <>
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-sm">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-400 to-cyan-300 flex items-center justify-center text-slate-950 font-black text-sm shadow-md shadow-cyan-500/20">
                     K
                   </div>
-                  <span>
-                    {contact?.businessName ? (
-                      contact.businessName
-                    ) : (
-                      <>KNYK <span className="text-cyan-400">Labs</span></>
-                    )}
-                  </span>
-                </>
+                  <div className="flex flex-col">
+                    <span className="text-lg font-bold tracking-tight text-white leading-none">
+                      KNYK <span className="text-cyan-400">Labs</span>
+                    </span>
+                    <span className="text-[9px] tracking-widest uppercase text-slate-400 font-semibold mt-0.5">
+                      Digital Studio
+                    </span>
+                  </div>
+                </div>
               )}
             </Link>
 

@@ -13,7 +13,7 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
   const { branding } = useBranding();
   const { website } = useWebsite();
   const [imgError, setImgError] = useState(false);
-  const footerLogo = branding?.primaryLogo || branding?.brandMark;
+  const footerBrandMark = branding?.brandMark || branding?.primaryLogo;
   const currentYear = new Date().getFullYear();
   const whatsappUrl = buildWhatsAppLink(contact?.whatsappNumber);
   const phoneUrl = buildPhoneLink(contact?.phone);
@@ -49,14 +49,14 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
-            {footerLogo && !imgError ? (
-              <Link href="/" className="inline-flex items-center gap-2.5">
+            {footerBrandMark && !imgError ? (
+              <Link href="/" className="inline-flex items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-full" aria-label="KNYK Labs Homepage">
                 <Image
-                  src={footerLogo.url}
-                  alt={footerLogo.alt || "KNYK Labs logo"}
-                  width={footerLogo.width || 140}
-                  height={footerLogo.height || 40}
-                  className="h-9 w-auto max-w-[180px] object-contain drop-shadow-sm"
+                  src={footerBrandMark.url}
+                  alt={footerBrandMark.alt || "KNYK Labs brand mark"}
+                  width={footerBrandMark.width || 180}
+                  height={footerBrandMark.height || 180}
+                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-full object-contain drop-shadow-[0_4px_16px_rgba(6,182,212,0.25)] transition-transform group-hover:scale-105"
                   onError={() => setImgError(true)}
                 />
               </Link>
