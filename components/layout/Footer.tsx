@@ -79,6 +79,17 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
               {footerDescription}
             </p>
 
+            <a
+              href="https://krishna-naik.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-cyan-400 transition-colors"
+              aria-label="Visit Krishna Naik's portfolio"
+            >
+              <span className="text-slate-500">Founder</span>
+              <span className="font-semibold">Krishna Naik ↗</span>
+            </a>
+
             <div className="pt-2 flex flex-col space-y-2 text-sm text-slate-300">
               {whatsappUrl && contact?.whatsappNumber && (
                 <a
