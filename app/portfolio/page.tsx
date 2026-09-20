@@ -10,10 +10,11 @@ import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CTASection } from "@/components/sections/CTASection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 120; // 2 minutes
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com").replace(/\/+$/, "");
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   title: {

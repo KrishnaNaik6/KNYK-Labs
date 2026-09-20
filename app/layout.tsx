@@ -18,7 +18,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 export const viewport: Viewport = {
   themeColor: "#060911",
@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
     getPublicBranding(),
   ]);
 
-  const siteUrl = website?.canonicalUrl || defaultSiteUrl;
+  const siteUrl = getSiteUrl(website?.canonicalUrl);
   const title = website?.siteTitle || "KNYK Labs — Digital Solutions That Move You Forward";
   const description =
     website?.siteDescription ||

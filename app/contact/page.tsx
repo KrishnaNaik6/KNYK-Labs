@@ -7,10 +7,11 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { DirectContactCard } from "@/components/contact/DirectContactCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 60;
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com").replace(/\/+$/, "");
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   title: {

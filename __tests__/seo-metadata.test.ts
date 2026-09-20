@@ -46,6 +46,7 @@ describe("Dynamic SEO Generation (Robots & Sitemap)", () => {
   });
 
   it("generates disallow robots rules when NEXIS sets noindex", async () => {
+    delete process.env.NEXT_PUBLIC_SITE_URL;
     global.fetch = vi.fn().mockImplementation((url: string) => {
       if (url.includes("/api/v1/knyk/website")) {
         return Promise.resolve({

@@ -18,6 +18,7 @@ import { CallButton } from "@/components/ui/CallButton";
 
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getServiceJsonLd, getBreadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -25,7 +26,7 @@ interface PageProps {
 
 export const revalidate = 60;
 
-const defaultSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://knyklabs.com").replace(/\/+$/, "");
+const defaultSiteUrl = getSiteUrl();
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

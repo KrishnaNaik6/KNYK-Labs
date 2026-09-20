@@ -2,14 +2,11 @@ import { MetadataRoute } from "next";
 import { getPublicServices } from "@/lib/api/services";
 import { getPublicPortfolio } from "@/lib/api/portfolio";
 import { getPublicWebsiteSettings } from "@/lib/api/website";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { website } = await getPublicWebsiteSettings();
-  const siteUrl = (
-    website?.canonicalUrl ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://knyklabs.com"
-  ).replace(/\/+$/, "");
+  const siteUrl = getSiteUrl(website?.canonicalUrl);
 
   // Core static marketing routes
   const staticRoutes: MetadataRoute.Sitemap = [
