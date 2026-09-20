@@ -79,6 +79,21 @@ export const Header: React.FC = () => {
               )}
             </Link>
 
+            <a
+              href="https://krishna-naik.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:flex flex-col leading-tight ml-1 pl-4 border-l border-slate-700/70 group/founder"
+              aria-label="Visit Krishna Naik's portfolio"
+            >
+              <span className="text-[9px] uppercase tracking-[0.18em] text-slate-500 font-semibold">
+                Founder
+              </span>
+              <span className="text-xs font-semibold text-slate-300 group-hover/founder:text-cyan-400 transition-colors">
+                Krishna Naik ↗
+              </span>
+            </a>
+
             {/* Desktop Navigation Links */}
             <nav
               className="hidden md:flex items-center gap-1 bg-slate-900/60 border border-slate-800/80 px-4 py-1.5 rounded-full backdrop-blur-md"
