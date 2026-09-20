@@ -223,7 +223,7 @@ export const Footer: React.FC<{ contact?: KnykPublicContact | null }> = ({ conta
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-cyan-400 font-mono">04.</span>
-                <span>Agile delivery & review</span>
+                <span>delivery & review</span>
               </li>
             </ol>
           </div>
