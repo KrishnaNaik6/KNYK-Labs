@@ -42,6 +42,16 @@ export function getOrganizationJsonLd(
     logo: logoUrl,
     description:
       "High-impact software engineering, visual branding, multimedia production, and custom AI automation studio.",
+    knowsAbout: [
+      "Freelance Software Development",
+      "Custom Software Development",
+      "Full Stack Web Development",
+      "Mobile Application Development",
+      "AI & Machine Learning Solutions",
+      "Autonomous Workflow Automation",
+      "UI/UX Digital Design",
+      "Next.js and React Engineering",
+    ],
   };
 
   if (sameAs.length > 0) {

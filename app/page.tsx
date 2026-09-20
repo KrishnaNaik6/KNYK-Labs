@@ -28,7 +28,11 @@ export const metadata: Metadata = {
     "KNYK Labs builds custom software, modern websites, mobile applications, AI solutions, automation systems, and digital experiences for businesses.",
   keywords: [
     "KNYK Labs",
-    "software development",
+    "freelance software development",
+    "freelance web developer",
+    "freelance full stack developer",
+    "hire software developers",
+    "software development company",
     "AI development",
     "web development",
     "mobile app development",

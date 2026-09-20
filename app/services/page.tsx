@@ -21,7 +21,11 @@ export const metadata: Metadata = {
   description:
     "Explore KNYK Labs services including custom software development, web and mobile apps, AI solutions, automation, design, and digital services.",
   keywords: [
-    "software development services",
+    "freelance software development",
+    "freelance web developer",
+    "freelance software development services",
+    "hire freelance engineers",
+    "custom software development services",
     "web development",
     "mobile app development",
     "AI development",

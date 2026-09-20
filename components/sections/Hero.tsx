@@ -31,7 +31,7 @@ export const Hero: React.FC = () => {
 
             {/* Supporting Copy */}
             <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
-              High-impact software engineering, visual branding, multimedia production, and intelligent automation systems built for ambitious businesses and creators.
+              Freelance and custom software engineering, modern web applications, visual branding, and intelligent AI automation systems built for ambitious businesses and creators.
             </p>
 
             {/* CTAs */}
