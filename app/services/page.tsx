@@ -2,8 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { getPublicServices } from "@/lib/api/services";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ServiceGrid } from "@/components/services/ServiceGrid";
-import { ErrorState } from "@/components/ui/ErrorState";
+import { LiveServicesCatalog } from "@/components/services/LiveServicesCatalog";
 import { CTASection } from "@/components/sections/CTASection";
 import { ServiceGridSkeleton } from "@/components/ui/LoadingSkeleton";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -76,27 +75,13 @@ export default async function ServicesPage() {
           description="Browse our dynamic service offerings. Every engagement is backed by direct communication, transparent pricing, and structured milestone deliveries."
         />
 
-        {!catalog.isAvailable || catalog.services.length === 0 ? (
-          <div className="my-12">
-            <ErrorState
-              title="Unable to load our services right now"
-              message="Our live catalog is currently syncing with the NEXIS control center. Please contact us directly and we'll help you find the right solution for your project."
-            />
-          </div>
-        ) : (
-          <div className="mb-20">
-            <Suspense fallback={<ServiceGridSkeleton count={6} />}>
-              <ServiceGrid
-                services={catalog.services}
-                categories={catalog.categories}
-                showFilters={true}
-              />
-            </Suspense>
-          </div>
-        )}
+        <Suspense fallback={<ServiceGridSkeleton count={6} />}>
+          <LiveServicesCatalog initialCatalog={catalog} />
+        </Suspense>
 
         <CTASection />
       </div>
     </div>
   );
 }
+

@@ -1,10 +1,13 @@
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CatalogResult } from "@/lib/nexis/client";
 import { groupServicesByCategory } from "@/lib/nexis/services";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ServiceCard } from "@/components/services/ServiceCard";
-import { ErrorState } from "@/components/ui/ErrorState";
+import { LiveServicesRetryCard } from "@/components/services/LiveServicesRetryCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -13,8 +16,10 @@ export interface ServicesSectionProps {
 }
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ catalog }) => {
-  // If catalog is unavailable or has no services, render graceful fallback
-  if (!catalog.isAvailable || catalog.services.length === 0) {
+  const [liveCatalog, setLiveCatalog] = useState<CatalogResult>(catalog);
+
+  // If catalog is unavailable or has no services, render live auto-retry card
+  if (!liveCatalog.isAvailable || liveCatalog.services.length === 0) {
     return (
       <section id="services" className="py-20 md:py-28 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,16 +34,24 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ catalog }) => 
             description="Directly managed through NEXIS. Transparent upfront pricing, clear delivery timelines, and full milestone accountability."
           />
 
-          <ErrorState
-            title="Unable to load our services right now"
-            message="Our live catalog is currently syncing with the NEXIS control center. Please contact us directly and we'll help you find the right solution for your project."
-          />
+          <div className="my-8">
+            <LiveServicesRetryCard
+              onLoaded={(loaded) => {
+                setLiveCatalog({
+                  services: loaded.services,
+                  categories: loaded.categories,
+                  isAvailable: true,
+                });
+              }}
+            />
+          </div>
         </div>
       </section>
     );
   }
 
-  const categoryGroups = groupServicesByCategory(catalog.services, catalog.categories);
+  const categoryGroups = groupServicesByCategory(liveCatalog.services, liveCatalog.categories);
+
 
   return (
     <section id="services" className="py-20 md:py-28 relative">
