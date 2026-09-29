@@ -4,6 +4,7 @@ import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
 import { LiveServicesRetryCard } from "@/components/services/LiveServicesRetryCard";
 import { LiveServicesCatalog } from "@/components/services/LiveServicesCatalog";
 import { ServicesSection } from "@/components/sections/ServicesSection";
+import { ServiceGrid } from "@/components/services/ServiceGrid";
 import type { Service, Category } from "@/lib/nexis/types";
 
 vi.mock("next/navigation", () => ({
@@ -225,5 +226,24 @@ describe("Live Services Client-Side Auto-Retry System", () => {
     await waitFor(() => {
       expect(screen.getByText("Website Development")).toBeDefined();
     });
+  });
+
+  it("ServiceGrid renders movable category tabs strip with tablist role and grab cursor", () => {
+    render(
+      <ServiceGrid
+        services={mockServices}
+        categories={mockCategories}
+        showFilters={true}
+      />
+    );
+
+    const tablist = screen.getByRole("tablist");
+    expect(tablist).toBeDefined();
+    expect(tablist.className).toContain("overflow-x-auto");
+    expect(tablist.className).toContain("cursor-grab");
+
+    // All Capabilities and Software & Development tabs exist
+    expect(screen.getByRole("tab", { name: "All Capabilities" })).toBeDefined();
+    expect(screen.getByRole("tab", { name: "Software & Development" })).toBeDefined();
   });
 });
